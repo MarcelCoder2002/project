@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
-	class Regle extends Model {
+	class PromotionRayon extends Model {
 		isIndefinite() {
 			let now = new Date();
 			return now >= dateDebut && (!this.dateFin || this.dateFin === null);
@@ -20,18 +20,22 @@ module.exports = (sequelize) => {
 		}
 	}
 
-	Regle.init(
+	PromotionRayon.init(
 		{
 			id: {
 				type: DataTypes.INTEGER,
 				primaryKey: true,
-				allowNull: false,
 				autoIncrement: true,
-			},
-			multiplicite: {
-				type: DataTypes.TINYINT,
 				allowNull: false,
-				defaultValue: 0,
+			},
+			pourcentage: {
+				type: DataTypes.FLOAT(5, 2),
+				allowNull: false,
+				defaultValue: 0.0,
+				validate: {
+					min: 0.0,
+					max: 100.0,
+				},
 			},
 			dateDebut: {
 				field: "date_debut",
@@ -42,28 +46,32 @@ module.exports = (sequelize) => {
 			dateFin: {
 				field: "date_fin",
 				type: DataTypes.DATE,
-				allowNull: false,
+				allowNull: true,
 			},
 		},
 		{
 			sequelize,
-			modelName: "Regle",
-			tableName: "regle",
+			modelName: "PromotionRayon",
+			tableName: "promotion_rayon",
 			timestamps: false,
 			underscored: true,
 		}
 	);
 
-	Regle.associate = (models) => {
-		Regle.hasMany(models.Rayon, {
+	PromotionRayon.associate = (models) => {
+		PromotionRayon.belongsTo(models.Rayon, {
 			onDelete: "CASCADE",
 			onUpdate: "CASCADE",
 			foreignKey: {
-				field: "id_regle",
-				allowNull: true,
+				field: "code_rayon",
+				allowNull: false,
+			},
+			as: {
+				singular: "promotion",
+				plural: "promotions",
 			},
 		});
 	};
 
-	return Regle;
+	return PromotionRayon;
 };

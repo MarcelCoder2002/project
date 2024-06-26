@@ -15,8 +15,6 @@ const normalizePort = (val) => {
 };
 const port = normalizePort(process.env.PORT || "8000");
 app.set("port", port);
-app.set("views", __dirname + "/views");
-app.engine("html", require("ejs").renderFile);
 app.use(cors());
 
 const errorHandler = (error) => {
@@ -50,4 +48,31 @@ server.on("listening", () => {
 	console.log("Listening on " + bind);
 });
 
-server.listen(port);
+const db = require("./models");
+db.sequelize.sync().then(() => {
+	db.Rayon.create({
+		nom: "Cereales",
+	}).then((rayon) => {
+		rayon
+			.createProduit({
+				nom: "Riz 1Kg",
+				prix: 17.95,
+			})
+			.then((produit) => {
+				db.Client.create({
+					nom: "Goumou",
+					prenom: "Marcel Raymond",
+					email: "marcelraymondgoumou@gmail.com",
+					motDePasse: "password",
+					adresse: "Agadir",
+				}).then(async (client) => {
+					let detail = await client.createPanierEcommerce({
+						ProduitId: produit.id,
+						quantite: 3,
+					});
+					await client.validatePanierEcommerce();
+				});
+			});
+	});
+	server.listen(port);
+});

@@ -1,5 +1,9 @@
+const db = require("../models");
+
 exports.index = (req, res, next) => {
-	res.send("Profile");
+	db.Client.findByPk(3, { include: db.ChequeCadeau }).then((client) => {
+		res.json(client);
+	});
 };
 
 exports.login = (req, res, next) => {
