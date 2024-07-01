@@ -10,6 +10,32 @@ module.exports = (sequelize) => {
 		getFullName() {
 			return this.nom + " " + this.prenom;
 		}
+
+		async createNotification(data = {}, options = {}) {
+			data.admin = this.id;
+			return await this.sequelize
+				.model("Notification")
+				.create(data, options);
+		}
+
+		async getNotification(options = {}) {
+			if (options.where) {
+				options.where.admin = this.id;
+			}
+			return await this.sequelize.model("Notification").findAll(options);
+		}
+
+		async createMessage(data = {}, options = {}) {
+			data.admin = this.id;
+			return await this.sequelize.model("Message").create(data, options);
+		}
+
+		async getMessage(options = {}) {
+			if (options.where) {
+				options.where.admin = this.id;
+			}
+			return await this.sequelize.model("Message").findAll(options);
+		}
 	}
 
 	Admin.init(

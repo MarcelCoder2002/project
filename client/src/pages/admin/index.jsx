@@ -2,6 +2,7 @@ import { Route, Outlet } from "react-router-dom";
 import Home, { Router as HomeRouter, loader as homeLoader } from "./home";
 import Login, { action as loginAction } from "../../components/Login";
 import useAuthenticatedUser from "../../hooks/useAuthenticatedUser";
+import Notification, { Router as NotificationRouter } from "./notification";
 
 export function Router() {
 	const links = { Administration: "/admin" };
@@ -19,6 +20,9 @@ export function Router() {
 			/>
 			<Route index element={<Home />} loader={homeLoader}></Route>
 			{HomeRouter(links)}
+			<Route path="notification" element={<Notification links={links} />}>
+				{NotificationRouter()}
+			</Route>
 		</>
 	);
 }

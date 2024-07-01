@@ -31,13 +31,10 @@ export const loader = async () => {
 			{
 				name: "notification",
 				options: {
-					update:
-						window.location.pathname === "/profile/notification",
+					update: window.location.pathname.endsWith("/notification"),
 					order: [["dateCreation", "DESC"]],
 				},
 			},
-			"cheque_cadeau",
-			"carte_fidelite",
 		],
 	});
 	let user = null;

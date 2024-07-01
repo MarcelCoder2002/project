@@ -1,54 +1,28 @@
-import { Form, redirect, useLoaderData, useParams } from "react-router-dom";
-import Content from "../../../../components/Content";
-import Header from "../../../../components/Header";
-import {
-	formatDatetime,
-	formDataToJson,
-	snakeToCapitalCase,
-} from "../../../../utils/format";
-import { get, post } from "../../../../utils/requests";
-import User from "../../../../utils/config/User";
-import useRequest from "../../../../hooks/useRequest";
+import { Form, useLoaderData } from "react-router-dom";
+import Content from "../../../components/Content";
+import Header from "../../../components/Header";
+import { get, post } from "../../../utils/requests";
 import qs from "qs";
+import useRequest from "../../../hooks/useRequest";
+import { formatDatetime, formDataToJson } from "../../../utils/format";
+import User from "../../../utils/config/User";
 import { Fragment } from "react";
 
 export const loader = async ({ params }) => {
-	let data = null;
-	try {
-		switch (params.name) {
-			case "reclamation":
-				data = (
-					await get(
-						`http://localhost:8000/api/table/reclamation/${
-							params.id
-						}?${qs.stringify({
-							includes: [
-								{
-									name: "message",
-									options: {
-										includes: ["admin"],
-										update: true,
-									},
-								},
-								"client",
-							],
-						})}`
-					)
-				).data;
-				break;
-
-			default:
-				data = (
-					await get(
-						`http://localhost:8000/api/table/${params.name}/${params.id}`
-					)
-				).data;
-				break;
-		}
-	} catch (error) {
-		return redirect("/admin/login");
-	}
-
+	const data = (
+		await get(
+			`http://localhost:8000/api/me/reclamation/${
+				params.id
+			}?${qs.stringify({
+				includes: [
+					{
+						name: "message",
+						options: { includes: ["admin"], update: true },
+					},
+				],
+			})}`
+		)
+	).data;
 	return data;
 };
 
@@ -56,16 +30,16 @@ export const action = async ({ request }) => {
 	try {
 		const data = formDataToJson(await request.formData());
 		const message = (
-			await post(`http://localhost:8000/api/table/message/new`, {
+			await post(`http://localhost:8000/api/me/message/new`, {
 				...data,
 				msg: {
-					src: "admin",
-					dst: "client",
+					src: "client",
+					dst: "admin",
 				},
 			})
 		).data;
 
-		const user = new User(message.admin);
+		const user = new User(message.client);
 	} catch (error) {
 		console.log(error);
 	}
@@ -73,26 +47,16 @@ export const action = async ({ request }) => {
 };
 
 export default function Show({ links }) {
-	const data = useLoaderData();
 	const request = useRequest();
-	const { id, name } = useParams();
-
+	const data = useLoaderData();
 	let currentUser = null;
 	let isClient = true;
 
-	links = {
-		...links,
-	};
-
-	const title = snakeToCapitalCase(name);
-	links[title] = `/admin/management/${name}`;
-	let main = <></>;
-
-	const client = new User(data.includes.client);
-
-	switch (name) {
-		case "reclamation":
-			main = (
+	links["Réclamations"] = "/profile/complaint";
+	return (
+		<Content
+			header={<Header title="Message" links={links}></Header>}
+			main={
 				<div className="card direct-chat direct-chat-primary">
 					<div className="card-header">
 						<h3 className="card-title">{data.objet}</h3>
@@ -111,18 +75,18 @@ export default function Show({ links }) {
 							className="direct-chat-messages"
 							style={{ minHeight: 500 }}
 						>
-							<div className="direct-chat-msg">
+							<div className="direct-chat-msg right">
 								<div className="direct-chat-infos clearfix">
-									<span className="direct-chat-name float-left">
-										{client.getFullName()}
+									<span className="direct-chat-name float-right">
+										Vous
 									</span>
-									<span className="direct-chat-timestamp float-right">
+									<span className="direct-chat-timestamp float-left">
 										{formatDatetime(data.dateCreation)}
 									</span>
 								</div>
 								<img
 									className="direct-chat-img"
-									src={client.getImage()}
+									src={request.getUser().getImage()}
 									alt="message user image"
 								/>
 								<div className="direct-chat-text">
@@ -133,28 +97,26 @@ export default function Show({ links }) {
 								<Fragment key={key}>
 									{(() => {
 										isClient = !!message.client;
-										currentUser = !isClient
+										currentUser = isClient
 											? request.getUser()
-											: client;
+											: new User(message.admin);
 									})()}
 									<div
 										className={`direct-chat-msg${
-											!isClient ? " right" : ""
+											isClient ? " right" : ""
 										}`}
 									>
 										<div className="direct-chat-infos clearfix">
 											<span
 												className={`direct-chat-name float-${
-													!isClient ? "right" : "left"
+													isClient ? "right" : "left"
 												}`}
 											>
-												{!isClient
-													? "Vous"
-													: currentUser.getFullName()}
+												{isClient ? "Vous" : "Admin"}
 											</span>
 											<span
 												className={`direct-chat-timestamp float-${
-													!isClient ? "left" : "right"
+													isClient ? "left" : "right"
 												}`}
 											>
 												{formatDatetime(
@@ -177,7 +139,7 @@ export default function Show({ links }) {
 					</div>
 					<div className="card-footer">
 						<Form
-							action={`/admin/management/reclamation/show/${data.id}`}
+							action={`/profile/complaint/show/${data.id}`}
 							method="post"
 						>
 							<input
@@ -188,7 +150,7 @@ export default function Show({ links }) {
 							/>
 							<input
 								type="hidden"
-								name="admin"
+								name="client"
 								value={request.getUser().getId()}
 								required
 							/>
@@ -213,14 +175,7 @@ export default function Show({ links }) {
 					</div>
 					{/* /.card-footer*/}
 				</div>
-			);
-			break;
-	}
-
-	return (
-		<Content
-			header={<Header title="Informations" links={links} />}
-			main={main}
-		></Content>
+			}
+		/>
 	);
 }

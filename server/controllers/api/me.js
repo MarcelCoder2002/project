@@ -28,7 +28,7 @@ exports.getPurchases = async (req, res, next) => {
 	if (req.user.getRoles().includes("ROLE_CLIENT")) {
 		res.json(
 			await req.user.getAchat({
-				order: [["date", "DESC"]],
+				order: [["date", "ASC"]],
 				includes: [
 					{ name: "detail", options: { includes: ["produit"] } },
 				],
@@ -65,7 +65,46 @@ exports.index = async (req, res, next) => {
 					Model = db[snakeToCamel(table)];
 				}
 				options.where = options.where ?? {};
-				options.where.client = req.user.id;
+				if (tableName !== "client") {
+					options.where.client = req.user.id;
+				} else {
+					options.where.id = req.user.id;
+				}
+				data.includes[tableName] = await Model.findAll(options);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+		// console.log(req.query?.includes, req.user, data);
+	} else if (
+		req.query?.includes &&
+		req.user.getRoles().includes("ROLE_ADMIN")
+	) {
+		data.includes = {};
+		for (const table of req.query.includes) {
+			try {
+				let Model;
+				let options = {};
+				let tableName;
+				if (typeof table === "object") {
+					tableName = table.name;
+					Model = db[snakeToCamel(table.name)];
+					options = table.options ?? options;
+				} else {
+					tableName = table;
+					Model = db[snakeToCamel(table)];
+				}
+				options.where = options.where ?? {};
+				options.where = options.where ?? {};
+				if (tableName !== "admin") {
+					if (["notification", "message"]) {
+						options.where.client = null;
+					} else {
+						options.where.admin = req.user.id;
+					}
+				} else {
+					options.where.id = req.user.id;
+				}
 				data.includes[tableName] = await Model.findAll(options);
 			} catch (error) {}
 		}
@@ -77,16 +116,29 @@ exports.table = async (req, res, next) => {
 	try {
 		const Model = db[snakeToCamel(req.params.name)];
 		let options = {
-			raw: true,
+			raw: !req.query?.includes,
 			where: req.query?.where ?? {},
 			update: req.query?.update ?? false,
 		};
 		if (["admin", "client"].includes(req.params.name)) {
 			options.attributes = { exclude: ["motDePasse"] };
+			options.where.id = req.user.id;
 		}
-		if (req.user.getRoles().includes("ROLE_CLIENT")) {
+		if (req.query?.includes) {
+			options.includes = req.query.includes;
+		}
+		if (
+			req.user.getRoles().includes("ROLE_CLIENT") &&
+			req.params.name !== "client"
+		) {
 			options.where.client = req.user.id;
+		} else if (
+			!!Model.getAttributes()["admin"] &&
+			req.params.name !== "admin"
+		) {
+			options.where.admin = req.user.id;
 		}
+
 		res.json(await Model.findAll(options));
 	} catch (error) {
 		if (error instanceof TypeError) {
@@ -102,18 +154,25 @@ exports.show = async (req, res, next) => {
 	try {
 		const Model = db[snakeToCamel(req.params.name)];
 		let options = {
-			raw: true,
+			raw: !req.query?.includes,
 			update: req.query?.update ?? false,
 		};
 		if (["admin", "client"].includes(req.params.name)) {
 			options.attributes = { exclude: ["motDePasse"] };
 		}
+		if (req.query?.includes) {
+			options.includes = req.query?.includes;
+		}
 		let model = (await Model.findByPk(req.params.id, options)) ?? {};
 		if (req.user.getRoles().includes("ROLE_CLIENT")) {
 			if (
-				req.params.name !== "admin" ||
-				(!!Model.getAttributes()["client"] &&
-					`${model?.client}` === `${req.user.id}`)
+				!!Model.getAttributes()["client"] &&
+				`${model?.client}` === `${req.user.id}`
+			) {
+				res.json(model);
+			} else if (
+				!!Model.getAttributes()["admin"] &&
+				`${model?.admin}` === `${req.user.id}`
 			) {
 				res.json(model);
 			} else {
@@ -127,6 +186,7 @@ exports.show = async (req, res, next) => {
 		}
 	} catch (error) {
 		if (error instanceof TypeError) {
+			console.log(error);
 			res.status(404).json({
 				status: "error",
 				message: "Table `" + req.params.name + "` doesn't exist !",
@@ -146,10 +206,22 @@ exports.new = async (req, res, next) => {
 			options.$dependencies = req.body.$dependencies;
 			data = req.body[req.params.name];
 		}
+		if (req.body.msg) {
+			options.msg = req.body.msg;
+		}
+		console.log(req.body);
 		let model = {};
 		if (req.user.getRoles().includes("ROLE_CLIENT")) {
 			if (!!Model.getAttributes()["client"]) {
 				data.client = req.user.id;
+				model = await Model.create(data, options);
+				res.json({
+					status: "success",
+					message: "La nouvelle ligne à bien été ajoutée !",
+					response: model,
+				});
+			} else if (!!Model.getAttributes()["admin"]) {
+				data.admin = req.user.id;
 				model = await Model.create(data, options);
 				res.json({
 					status: "success",
@@ -166,7 +238,7 @@ exports.new = async (req, res, next) => {
 			model = await Model.create(data, options);
 			res.json({
 				status: "success",
-				message: "Model created !",
+				message: "La nouvelle ligne à bien été ajoutée !",
 				response: model,
 			});
 		}
@@ -199,6 +271,16 @@ exports.edit = async (req, res, next) => {
 			if (
 				!!Model.getAttributes()["client"] &&
 				`${model?.client}` === `${req.user.id}`
+			) {
+				await model.update(data, options);
+				res.json({
+					status: "success",
+					message: "La ligne à bien été modifiée !",
+					response: model,
+				});
+			} else if (
+				!!Model.getAttributes()["admin"] &&
+				`${model?.admin}` === `${req.user.id}`
 			) {
 				await model.update(data, options);
 				res.json({
@@ -247,6 +329,16 @@ exports.delete = async (req, res, next) => {
 					message: "La ligne à bien été supprimée !",
 					response: model,
 				});
+			} else if (
+				!!Model.getAttributes()["admin"] &&
+				`${model?.admin}` === `${req.user.id}`
+			) {
+				await model.destroy();
+				res.json({
+					status: "success",
+					message: "La ligne à bien été supprimée !",
+					response: model,
+				});
 			} else {
 				res.status(403).json({
 					status: "error",
@@ -279,6 +371,12 @@ exports.deleteAll = async (req, res, next) => {
 		if (req.user.getRoles().includes("ROLE_CLIENT")) {
 			if (!!Model.getAttributes()["client"]) {
 				await Model.destroy({ where: { client: req.user.id } });
+				res.json({
+					status: "success",
+					message: "Models deleted !",
+				});
+			} else if (!!Model.getAttributes()["admin"]) {
+				await Model.destroy({ where: { admin: req.user.id } });
 				res.json({
 					status: "success",
 					message: "Models deleted !",

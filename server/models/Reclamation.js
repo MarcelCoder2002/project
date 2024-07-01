@@ -1,11 +1,26 @@
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
+	const Notification = require("./Notification")(sequelize);
 	class Reclamation extends Model {
 		static STATUT = {
 			EN_ATTENTE: "En attente",
 			TRAITE: "Traité",
 		};
+
+		async getClient(options = {}) {
+			return await this.sequelize
+				.model("Client")
+				.findByPk(this.client, options);
+		}
+
+		async getMessage(options = {}) {
+			options.where = {
+				...(options?.where ?? {}),
+				reclamation: this.id,
+			};
+			return await this.sequelize.model("Message").findAll(options);
+		}
 	}
 
 	Reclamation.init(
@@ -38,10 +53,6 @@ module.exports = (sequelize) => {
 				],
 				defaultValue: Reclamation.STATUT.EN_ATTENTE,
 			},
-			reponse: {
-				type: DataTypes.TEXT,
-				allowNull: true,
-			},
 			dateCreation: {
 				field: "date_creation",
 				type: DataTypes.DATE,
@@ -62,6 +73,13 @@ module.exports = (sequelize) => {
 			timestamps: false,
 			underscored: true,
 			hooks: {
+				afterCreate: async (reclamation, options) => {
+					Notification.create({
+						message:
+							"Vous avez une nouvelle réclamation en attente !",
+						type: Notification.TYPE.RECLAMATION,
+					});
+				},
 				beforeUpdate: (reclamation, options) => {
 					reclamation.dateModification = new Date()
 						.toISOString()

@@ -84,6 +84,18 @@ module.exports = (sequelize) => {
 			return await this.sequelize.model("Notification").findAll(options);
 		}
 
+		async createMessage(data = {}, options = {}) {
+			data.client = this.id;
+			return await this.sequelize.model("Message").create(data, options);
+		}
+
+		async getMessage(options = {}) {
+			if (options.where) {
+				options.where.client = this.id;
+			}
+			return await this.sequelize.model("Message").findAll(options);
+		}
+
 		async validatePanierMagasin(details, magasin) {
 			if (details) {
 				const achat = await this.createAchat({ magasin: magasin });

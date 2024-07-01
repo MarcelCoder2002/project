@@ -3,6 +3,7 @@ const { send } = require("../src/email");
 
 module.exports = (sequelize) => {
 	const Produit = require("./Produit")(sequelize);
+	const Notification = require("./Notification")(sequelize);
 
 	class Detail extends Model {
 		async getAchat(options = {}) {
@@ -118,17 +119,24 @@ module.exports = (sequelize) => {
 							let text = `Vous avez reçu ${n} nouveau${
 								n === 1 ? " chèque cadeau" : "x chèques cadeaux"
 							} !`;
-							if (client.email) {
-								send({
-									from: "admin@gmail.com",
-									to: client.email,
-									subject: "Notification de chèque cadeau",
-									html: `<h1>Notification</h1><h2>Chèque cadeau</h2><p>${text} Vous pourrez venir le${
-										n === 1 ? "" : "s"
-									} récupérer dans l'une de nos agences !</p>`,
-								});
-							}
-							client.createNotification({ message: text });
+							try {
+								if (client.email) {
+									send({
+										from: "admin@gmail.com",
+										to: client.email,
+										subject:
+											"Notification de chèque cadeau",
+										html: `<h1>Notification</h1><h2>Chèque cadeau</h2><p>${text} Vous pourrez venir le${
+											n === 1 ? "" : "s"
+										} récupérer dans l'une de nos agences !</p>`,
+									});
+								}
+							} catch (error) {}
+
+							client.createNotification({
+								message: text,
+								type: Notification.TYPE.CHEQUE_CADEAU,
+							});
 						}
 					} else {
 						// Avec promotion

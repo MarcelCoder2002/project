@@ -58,7 +58,7 @@ export default function Navbar() {
 				{/* <!-- Right navbar links --> */}
 				<ul className="navbar-nav ml-auto">
 					{/* <!-- Navbar Search --> */}
-					{!request.getUser().isAuthenticated() ? null : (
+					{request.getUser().isAuthenticated() && (
 						<li className="nav-item">
 							<a
 								className="nav-link"
@@ -70,11 +70,12 @@ export default function Navbar() {
 							</a>
 						</li>
 					)}
-
-					{request.getUser().hasRoles("ROLE_CLIENT") && (
+					{request.getUser().isAuthenticated() && (
 						<li className="nav-item">
 							<NavLink
-								to="/profile/notification"
+								to={`/${request
+									.getDomain()
+									.getName()}/notification`}
 								className="nav-link"
 								reloadDocument
 							>

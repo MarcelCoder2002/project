@@ -15,10 +15,18 @@ import { RequestContext } from "../../hooks/useRequest.js";
 
 export const loader = async ({}) => {
 	const query = qs.stringify({
-		includes: ["carte_fidelite", "cheque_cadeau"],
+		includes: [
+			{ name: "cheque_cadeau", options: { update: true } },
+			"carte_fidelite",
+		],
 	});
 	try {
-		return (await get(`http://localhost:8000/api/me?${query}`)).data;
+		const data = (await get(`http://localhost:8000/api/me?${query}`)).data;
+		if (!data.roles.includes("ROLE_CLIENT")) {
+			return redirect("/profile/login");
+		} else {
+			return data;
+		}
 	} catch (error) {
 		return redirect("/profile/login");
 	}
@@ -29,6 +37,8 @@ function Home() {
 	const actions = request.getUser().getTableActions("cheque_cadeau");
 	const data = useLoaderData();
 	const dependencies = data.includes;
+
+	console.log(dependencies);
 
 	const carte_fidelite = dependencies.carte_fidelite[0];
 	const cheques_cadeau = dependencies.cheque_cadeau;

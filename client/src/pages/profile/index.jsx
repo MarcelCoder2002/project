@@ -3,7 +3,7 @@ import Home, { loader as homeLoader } from "./home";
 import Login, { action as loginAction } from "../../components/Login";
 import Cart, { loader as cartLoader } from "./cart.jsx";
 import React from "react";
-import Complaint, { Router as ComplaintRouter } from "./complaint";
+import Complaint, { Router as ComplaintRouter } from "./complaint/index.jsx";
 import useAuthenticatedUser from "../../hooks/useAuthenticatedUser.js";
 import Purchases, { loader as purchasesLoader } from "./purchases.jsx";
 import Notification, { Router as NotificationRouter } from "./notification";

@@ -6,12 +6,11 @@ import {
 	Outlet,
 	NavLink,
 	useLoaderData,
-	useRouteLoaderData,
 } from "react-router-dom";
 import DataTable from "../../../../components/DataTable";
 import { snakeToCapitalCase } from "../../../../utils/format";
 
-import Show, { loader as showLoader } from "./show";
+import Show, { loader as showLoader, action as showAction } from "./show";
 import Edit, { action as editAction, loader as editLoader } from "./edit";
 import New, { action as newAction, loader as newLoader } from "./new";
 import { action as deleteAction } from "./delete";
@@ -52,6 +51,7 @@ export function Router({ links }) {
 				path="show/:id"
 				element={<Show links={links} />}
 				loader={showLoader}
+				action={showAction}
 			></Route>
 			<Route
 				path="edit/:id"

@@ -2,10 +2,22 @@ const { DataTypes, Model, Op } = require("sequelize");
 
 module.exports = (sequelize) => {
 	class Notification extends Model {
+		static TYPE = {
+			MESSAGE: "Message",
+			CHEQUE_CADEAU: "Chèque cadeau",
+			RECLAMATION: "Réclamation",
+		};
+
 		async getClient(options = {}) {
 			return await this.sequelize
 				.model("Client")
 				.findByPk(this.client, options);
+		}
+
+		async getAdmin(options = {}) {
+			return await this.sequelize
+				.model("Admin")
+				.findByPk(this.admin, options);
 		}
 	}
 
@@ -39,9 +51,29 @@ module.exports = (sequelize) => {
 					model: "Client",
 					key: "id",
 				},
-				allowNull: false,
+				allowNull: true,
 				onDelete: "CASCADE",
 				onUpdate: "CASCADE",
+			},
+			admin: {
+				field: "id_admin",
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Admin",
+					key: "id",
+				},
+				allowNull: true,
+				onDelete: "CASCADE",
+				onUpdate: "CASCADE",
+			},
+			type: {
+				type: DataTypes.STRING(20),
+				allowNull: false,
+				values: [
+					Notification.TYPE.CHEQUE_CADEAU,
+					Notification.TYPE.MESSAGE,
+					Notification.TYPE.RECLAMATION,
+				],
 			},
 		},
 		{
@@ -53,18 +85,14 @@ module.exports = (sequelize) => {
 			hooks: {
 				beforeFind: async (options) => {
 					if (
-						options.where.client &&
-						options.update &&
-						options.update === "true"
+						((options.update && options.update === "true") ||
+							(typeof options.update === "boolean" &&
+								options.update)) &&
+						(options.where.client || options.where.client === null)
 					) {
-						await Notification.update(
-							{ vue: true },
-							{
-								where: {
-									vue: false,
-								},
-							}
-						);
+						const options_ = { where: { vue: false } };
+						options_.where.client = options.where.client;
+						await Notification.update({ vue: true }, options_);
 					}
 				},
 			},

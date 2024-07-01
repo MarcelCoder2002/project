@@ -24,7 +24,6 @@ module.exports = (sequelize) => {
 		}
 
 		async getRegle(options = {}) {
-			const Regle = require("./Regle")(sequelize);
 			return await Regle.findByPk(this.regle, options);
 		}
 

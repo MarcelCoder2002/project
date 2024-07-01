@@ -57,6 +57,23 @@ db.sequelize.sync().then(async () => {
 	// 	adresse: "Agadir",
 	// });
 
+	// await db.Client.create(
+	// 	{
+	// 		nom: "Goumou",
+	// 		prenom: "Marcel Raymond",
+	// 		email: "mrg@gmail.com",
+	// 		motDePasse: "pass",
+	// 		adresse: "Agadir",
+	// 	},
+	// 	{
+	// 		$dependencies: {
+	// 			carte_fidelite: {
+	// 				code: "3850374938464",
+	// 			},
+	// 		},
+	// 	}
+	// );
+
 	// const magasin = await db.Magasin.create({
 	// 	nom: "Aswak",
 	// 	adresse: "Casablanca",

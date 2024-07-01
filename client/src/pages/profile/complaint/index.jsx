@@ -5,12 +5,19 @@ import { useContext } from "react";
 import { RequestContext } from "../../../hooks/useRequest.js";
 import { get } from "../../../utils/requests.js";
 import qs from "qs";
-import { NavLink, Outlet, Route, useLoaderData } from "react-router-dom";
-import New, { action as newAction, loader as newLoader } from "./new.jsx";
+import {
+	NavLink,
+	Outlet,
+	redirect,
+	Route,
+	useLoaderData,
+} from "react-router-dom";
+import New, { action as newAction } from "./new.jsx";
+import Show, { action as showAction, loader as showLoader } from "./show.jsx";
 
 export const loader = async ({ params }) => {
 	const query = qs.stringify({
-		includes: ["reclamation"],
+		includes: [{ name: "reclamation", options: { update: true } }],
 	});
 	try {
 		return (await get(`http://localhost:8000/api/me?${query}`)).data;
@@ -34,7 +41,13 @@ export function Router() {
 				path="new"
 				element={<New links={links} />}
 				action={newAction}
-				loader={newLoader}
+				// loader={newLoader}
+			></Route>
+			<Route
+				path="show/:id"
+				element={<Show links={links} />}
+				action={showAction}
+				loader={showLoader}
 			></Route>
 		</>
 	);

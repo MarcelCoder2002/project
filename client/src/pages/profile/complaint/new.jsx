@@ -1,9 +1,9 @@
 import { redirect, useLoaderData } from "react-router-dom";
-import Content from "../../../components/Content";
-import Form from "../../../components/form/Form";
-import Header from "../../../components/Header";
-import { formDataToJSON, parseKeyFormData } from "../../../utils/format";
-import { get, post } from "../../../utils/requests";
+import Content from "../../../components/Content.jsx";
+import Form from "../../../components/form/Form.jsx";
+import Header from "../../../components/Header.jsx";
+import { formDataToJSON, parseKeyFormData } from "../../../utils/format.js";
+import { get, post } from "../../../utils/requests.js";
 import Table from "../../../utils/config/Table.js";
 
 export const action = async ({ request }) => {
@@ -40,9 +40,6 @@ export async function loader() {
 }
 
 export default function New({ links }) {
-	links = {
-		...links,
-	};
 	const name = "reclamation";
 	const dependenciesData = useLoaderData();
 	links["Réclamation"] = `/profile/complaint`;

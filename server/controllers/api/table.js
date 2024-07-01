@@ -258,6 +258,7 @@ exports.index = async (req, res, next) => {
 		let options = {
 			raw: !req.query?.includes,
 			where: req.query?.where ?? {},
+			update: req.query?.update ?? false,
 		};
 		if (["admin", "client"].includes(req.params.name)) {
 			options.attributes = { exclude: ["motDePasse"] };
@@ -281,6 +282,7 @@ exports.show = async (req, res, next) => {
 		const Model = db[snakeToCamel(req.params.name)];
 		let options = {
 			raw: !req.query?.includes,
+			update: req.query?.update ?? false,
 		};
 		if (["admin", "client"].includes(req.params.name)) {
 			options.attributes = { exclude: ["motDePasse"] };
@@ -308,6 +310,9 @@ exports.new = async (req, res, next) => {
 		if (req.body.$dependencies) {
 			options.$dependencies = req.body.$dependencies;
 			data = req.body[req.params.name];
+		}
+		if (req.body.msg) {
+			options.msg = req.body.msg;
 		}
 		const model = await Model.create(data, options);
 		res.json({

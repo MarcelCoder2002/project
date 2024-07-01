@@ -187,14 +187,6 @@
 						}
 					}
 				},
-				"reponse": {
-					"form": {
-						"visibleFor": ["ROLE_ADMIN"],
-						"attributes": {
-							"type": "textarea"
-						}
-					}
-				},
 				"statut": {
 					"form": {
 						"visibleFor": ["ROLE_ADMIN"],
@@ -247,6 +239,7 @@
 				"new": {
 					"roles": ["ROLE_CLIENT"]
 				},
+				"show": {},
 				"edit": {
 					"roles": ["ROLE_ADMIN"]
 				}
@@ -460,6 +453,20 @@
 			},
 			"actions": {}
 		},
+		"message": {
+			"menu": false,
+			"fields": {
+				"id": {},
+				"message": {},
+				"dateCreation": {},
+				"client": { "external": true },
+				"admin": { "external": true },
+				"reclamation": {
+					"external": true
+				}
+			},
+			"actions": {}
+		},
 		"notification": {
 			"menu": false,
 			"fields": {
@@ -480,9 +487,7 @@
 				}
 			},
 			"actions": {
-				"delete": {
-					"roles": ["ROLE_CLIENT"]
-				}
+				"delete": {}
 			}
 		}
 	},

@@ -1,6 +1,8 @@
 const { DataTypes, Model, Op } = require("sequelize");
 
 module.exports = (sequelize) => {
+	const Notification = require("./Notification")(sequelize);
+
 	class ChequeCadeau extends Model {
 		static STATUT = {
 			EN_ATTENTE: "En attente",
@@ -91,20 +93,33 @@ module.exports = (sequelize) => {
 						.replace(/\..+/g, "");
 				},
 				beforeFind: async (options) => {
-					await ChequeCadeau.update(
-						{ statut: ChequeCadeau.STATUT.EXPIRE },
-						{
-							where: {
-								statut: {
-									[Op.in]: [
-										ChequeCadeau.STATUT.EN_ATTENTE,
-										ChequeCadeau.STATUT.RECUPERE,
-									],
+					if (options.where.client) {
+						await ChequeCadeau.update(
+							{ statut: ChequeCadeau.STATUT.EXPIRE },
+							{
+								where: {
+									client: options.where.client,
+									statut: {
+										[Op.in]: [
+											ChequeCadeau.STATUT.EN_ATTENTE,
+											ChequeCadeau.STATUT.RECUPERE,
+										],
+									},
+									dateExpiration: { [Op.lt]: new Date() },
 								},
-								dateExpiration: { [Op.lt]: new Date() },
-							},
-						}
-					);
+							}
+						);
+						await Notification.update(
+							{ vue: true },
+							{
+								where: {
+									client: options.where.client,
+									vue: false,
+									type: Notification.TYPE.CHEQUE_CADEAU,
+								},
+							}
+						);
+					}
 				},
 			},
 		}
