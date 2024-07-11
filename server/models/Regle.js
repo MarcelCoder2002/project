@@ -2,6 +2,12 @@ const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
 	class Regle extends Model {
+        async getRayons() {
+            return await sequelize
+                .model("Rayon")
+                .findAll({where: {regle: this.id}});
+        }
+
 		isIndefinite() {
 			let now = new Date();
 			return now >= dateDebut && (!this.dateFin || this.dateFin === null);
@@ -42,7 +48,7 @@ module.exports = (sequelize) => {
 			dateFin: {
 				field: "date_fin",
 				type: DataTypes.DATE,
-				allowNull: false,
+                allowNull: true,
 			},
 		},
 		{
@@ -51,19 +57,20 @@ module.exports = (sequelize) => {
 			tableName: "regle",
 			timestamps: false,
 			underscored: true,
-		}
-	);
+            hooks: {
+                beforeDestroy: async (regle, options) => {
+                    for (const rayon of await regle.getRayons()) {
+                        await rayon.update({regle: null});
+                        await rayon.save();
+                    }
+                },
 
-	Regle.associate = (models) => {
-		Regle.hasMany(models.Rayon, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_regle",
-				allowNull: true,
-			},
-		});
-	};
+                beforeSave: (regle, options) => {
+                    regle.dateFin = regle.dateFin === "" ? null : regle.dateFin;
+                },
+            },
+        }
+    );
 
 	return Regle;
 };

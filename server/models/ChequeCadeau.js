@@ -3,27 +3,36 @@ const { DataTypes, Model } = require("sequelize");
 module.exports = (sequelize) => {
 	class ChequeCadeau extends Model {
 		static STATUT = {
-			RECUPERE: "récupéré",
-			CONSOMME: "consommé",
-			EXPIRE: "expiré",
+            EN_ATTENTE: "En attente",
+            RECUPERE: "Récupéré",
+            CONSOMME: "Consommé",
+            EXPIRE: "Expiré",
 		};
 	}
 
 	ChequeCadeau.init(
 		{
-			code: {
-				type: DataTypes.STRING(13),
+            id: {
+                type: DataTypes.INTEGER,
 				primaryKey: true,
+                autoIncrement: true,
 				allowNull: false,
-				defaultValue: () => {
-					return new Date().valueOf().toString();
-				},
+            },
+            code: {
+                type: DataTypes.STRING(13),
+                unique: true,
+                allowNull: true,
 			},
 			statut: {
 				type: DataTypes.STRING,
 				allowNull: false,
-				values: ["récupéré", "consommé", "expiré"],
-				defaultValue: ChequeCadeau.STATUT.RECUPERE,
+                values: [
+                    ChequeCadeau.STATUT.EN_ATTENTE,
+                    ChequeCadeau.STATUT.RECUPERE,
+                    ChequeCadeau.STATUT.CONSOMME,
+                    ChequeCadeau.STATUT.EXPIRE,
+                ],
+                defaultValue: ChequeCadeau.STATUT.EN_ATTENTE,
 			},
 			dateExpiration: {
 				field: "date_expiration",
@@ -41,6 +50,29 @@ module.exports = (sequelize) => {
 					return d;
 				},
 			},
+            dateCreation: {
+                field: "date_creation",
+                type: DataTypes.DATE,
+                allowNull: false,
+                defaultValue: DataTypes.NOW,
+            },
+            dateModification: {
+                field: "date_modification",
+                type: DataTypes.DATE,
+                allowNull: false,
+                defaultValue: DataTypes.NOW,
+            },
+            client: {
+                field: "id_client",
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Client",
+                    key: "id",
+                },
+                allowNull: false,
+                onDelete: "CASCADE",
+                onUpdate: "CASCADE",
+            },
 		},
 		{
 			sequelize,
@@ -48,21 +80,25 @@ module.exports = (sequelize) => {
 			tableName: "cheque_cadeau",
 			timestamps: false,
 			underscored: true,
-		}
-	);
+            hooks: {
+                beforeSave: (cheque_cadeau, options) => {
+                    cheque_cadeau.code =
+                        cheque_cadeau.code === "" ? null : cheque_cadeau.code;
+                    cheque_cadeau.dateExpiration =
+                        cheque_cadeau.dateExpiration === ""
+                            ? null
+                            : cheque_cadeau.dateExpiration;
+                },
 
-	ChequeCadeau.associate = (models) => {
-		ChequeCadeau.belongsTo(models.Client, {
-			foreignKey: {
-				field: "id_client",
-				allowNull: false,
+                beforeUpdate: (cheque_cadeau, options) => {
+                    cheque_cadeau.dateModification = new Date()
+                        .toISOString()
+                        .replace(/T/, " ")
+                        .replace(/\..+/g, "");
+                },
 			},
-			as: {
-				singular: "chequeCadeau",
-				plural: "chequesCadeau",
-			},
-		});
-	};
+        }
+    );
 
 	return ChequeCadeau;
 };

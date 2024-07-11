@@ -1,13 +1,13 @@
 const db = require("../models");
 
 exports.index = (req, res, next) => {
-	db.Client.findByPk(3, { include: db.ChequeCadeau }).then((client) => {
-		res.json(client);
-	});
+    res.send("Profile !");
 };
 
 exports.login = (req, res, next) => {
-	res.send("Connexion profile");
+    if (!req.user) {
+        req.firewall.authenticator.authenticate(req, res, next);
+    }
 };
 
 exports.logout = (req, res, next) => {

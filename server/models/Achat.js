@@ -1,10 +1,17 @@
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
+    const Client = require("./Client")(sequelize);
+    const Magasin = require("./Magasin")(sequelize);
+
 	class Achat extends Model {
+        async createDetail(data = {}) {
+            data.achat = this.code;
+            return await this.sequelize.model("Detail").create(data);
+        }
+
 		async getClient() {
-			const Client = require("./Client")(sequelize);
-			return await Client.findByPk(this.ClientId);
+            return await Client.findByPk(this.client);
 		}
 	}
 
@@ -26,16 +33,27 @@ module.exports = (sequelize) => {
 				allowNull: false,
 				defaultValue: 0,
 			},
-			ClientId: {
+            client: {
 				field: "id_client",
 				type: DataTypes.INTEGER,
 				references: {
-					model: "Client",
+                    model: Client,
 					key: "id",
 				},
 				allowNull: false,
 				onDelete: "CASCADE",
 				onUpdate: "CASCADE",
+            },
+            magasin: {
+                field: "code_magasin",
+                type: DataTypes.INTEGER,
+                references: {
+                    model: Magasin,
+                    key: "code",
+                },
+                allowNull: true,
+                onDelete: "CASCADE",
+                onUpdate: "CASCADE",
 			},
 		},
 		{
@@ -44,41 +62,13 @@ module.exports = (sequelize) => {
 			tableName: "achat",
 			timestamps: false,
 			underscored: true,
-		}
-	);
-
-	Achat.associate = (models) => {
-		Achat.hasMany(models.Detail, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "code_achat",
-				allowNull: false,
+            hooks: {
+                beforeSave: (achat, options) => {
+                    achat.magasin = achat.magasin === "" ? null : achat.magasin;
+                },
 			},
-		});
-
-		Achat.belongsTo(models.Magasin, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "code_magasin",
-				allowNull: true,
-			},
-		});
-
-		Achat.belongsTo(models.Client, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_client",
-				allowNull: false,
-			},
-			as: {
-				singular: "achat",
-				plural: "achats",
-			},
-		});
-	};
+        }
+    );
 
 	return Achat;
 };

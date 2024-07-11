@@ -3,7 +3,9 @@ exports.index = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-	res.send("Connexion administration");
+    if (!req.user) {
+        req.firewall.authenticator.authenticate(req, res, next);
+    }
 };
 
 exports.logout = (req, res, next) => {

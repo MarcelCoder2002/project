@@ -1,9 +1,21 @@
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
+    const Regle = require("./Regle")(sequelize);
+    const PromotionRayon = require("./PromotionRayon")(sequelize);
+
 	class Rayon extends Model {
+        async createProduit(data = {}) {
+            data.rayon = this.code;
+            return await this.sequelize.model("Produit").create(data);
+        }
+
+        async createPromotionRayon(data = {}) {
+            data.rayon = this.code;
+            return await PromotionRayon.create(data);
+        }
+
 		async getPromotionRayon() {
-			const PromotionRayon = require("./PromotionRayon")(sequelize);
 			return await PromotionRayon.findOne({
 				where: { code_rayon: this.code },
 			});
@@ -11,7 +23,7 @@ module.exports = (sequelize) => {
 
 		async getRegle() {
 			const Regle = require("./Regle")(sequelize);
-			return await Regle.findOne({ where: { id: this.RegleId } });
+            return await Regle.findByPk(this.regle);
 		}
 
 		async hasPromotion() {
@@ -32,11 +44,11 @@ module.exports = (sequelize) => {
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
-			RegleId: {
+            regle: {
 				field: "id_regle",
 				type: DataTypes.INTEGER,
 				references: {
-					model: "Regle",
+                    model: Regle,
 					key: "id",
 				},
 				allowNull: true,
@@ -51,43 +63,26 @@ module.exports = (sequelize) => {
 			timestamps: false,
 			underscored: true,
 			hooks: {
-				afterSave: (rayon, options) => {
-					rayon.createPromotionRayon({});
-				},
-			},
-		}
-	);
+                beforeSave: (rayon, options) => {
+                    rayon.regle = rayon.regle === "" ? null : rayon.regle;
+                },
 
-	Rayon.associate = (models) => {
-		Rayon.hasMany(models.Produit, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "code_rayon",
-				allowNull: false,
-			},
-		});
+                afterCreate: (rayon, options) => {
+                    rayon.createPromotionRayon(
+                        options?.$dependencies?.promotion_rayon ?? {}
+                    );
+                },
 
-		Rayon.hasOne(models.PromotionRayon, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "code_rayon",
-				allowNull: false,
+                beforeUpdate: async (rayon, options) => {
+                    const promotion = await rayon.getPromotionRayon();
+                    await promotion.update(
+                        options?.$dependencies?.promotion_rayon ?? {}
+                    );
+                    await promotion.save();
+                },
 			},
-		});
-
-		Rayon.belongsTo(models.Regle, {
-			foreignKey: {
-				field: "id_regle",
-				allowNull: true,
-			},
-			as: {
-				singular: "rayon",
-				plural: "rayons",
-			},
-		});
-	};
+        }
+    );
 
 	return Rayon;
 };

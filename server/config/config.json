@@ -19,5 +19,84 @@
 		"database": "database_production",
 		"host": "127.0.0.1",
 		"dialect": "mysql"
+    },
+  "env": {
+    "JWT_SECRET_KEY": "0fff8bf92ac3fb411c3ca89273d84fcb118e8fde1e0664a168ce56bd6f4461eb"
+  },
+  "security": {
+    "firewall": {
+      "profile": {
+        "pattern": "^/profile/",
+        "provider": "Client",
+        "authenticator": "ClientAuthenticator",
+        "login": {
+          "path": "/profile/login/",
+          "check_path": "/profile/login/"
+        },
+        "logout": {
+          "path": "/profile/logout/",
+          "target": "/profile/"
+        }
+      },
+      "admin": {
+        "pattern": "^/admin/",
+        "provider": "Admin",
+        "authenticator": "AdminAuthenticator",
+        "login": {
+          "path": "/admin/login/",
+          "check_path": "/admin/login/"
+        },
+        "logout": {
+          "path": "/admin/logout/",
+          "target": "/admin/"
+        }
+      },
+      "main": {}
+    },
+    "access_control": [
+      {
+        "path": "^/profile/login",
+        "roles": [
+          "PUBLIC_ACCESS"
+        ]
+      },
+      {
+        "path": "^/admin/login",
+        "roles": [
+          "PUBLIC_ACCESS"
+        ]
+      },
+      {
+        "path": "^/api/me",
+        "roles": [
+          "IS_FULLY_AUTHENTICATED"
+        ]
+      },
+      {
+        "path": "^/api/table",
+        "roles": [
+          "ROLE_ADMIN"
+        ]
+      },
+      {
+        "path": "^/profile",
+        "roles": [
+          "ROLE_CLIENT"
+        ]
+      },
+      {
+        "path": "^/admin",
+        "roles": [
+          "ROLE_ADMIN"
+        ]
+      }
+    ]
+  },
+  "database": {
+    "username": "root",
+    "password": "rootpass",
+    "database": "project",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
 	}
 }

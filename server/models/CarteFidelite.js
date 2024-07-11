@@ -27,6 +27,17 @@ module.exports = (sequelize) => {
 					max: 0.99,
 				},
 			},
+            client: {
+                field: "id_client",
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Client",
+                    key: "id",
+                },
+                allowNull: false,
+                onDelete: "CASCADE",
+                onUpdate: "CASCADE",
+            },
 		},
 		{
 			sequelize,
@@ -36,19 +47,6 @@ module.exports = (sequelize) => {
 			underscored: true,
 		}
 	);
-
-	CarteFidelite.associate = (models) => {
-		CarteFidelite.belongsTo(models.Client, {
-			foreignKey: {
-				field: "id_client",
-				allowNull: false,
-			},
-			as: {
-				singular: "carteFidelite",
-				plural: "cartesFidelite",
-			},
-		});
-	};
 
 	return CarteFidelite;
 };

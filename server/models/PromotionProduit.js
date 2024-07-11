@@ -48,6 +48,17 @@ module.exports = (sequelize) => {
 				type: DataTypes.DATE,
 				allowNull: true,
 			},
+            produit: {
+                field: "id_produit",
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Produit",
+                    key: "id",
+                },
+                allowNull: false,
+                onDelete: "CASCADE",
+                onUpdate: "CASCADE",
+            },
 		},
 		{
 			sequelize,
@@ -56,25 +67,13 @@ module.exports = (sequelize) => {
 			timestamps: false,
 			underscored: true,
 			hooks: {
-				beforeCreate: async () => {},
+                beforeSave: (promotion, options) => {
+                    promotion.dateFin =
+                        promotion.dateFin === "" ? null : promotion.dateFin;
+                },
 			},
 		}
 	);
-
-	PromotionProduit.associate = (models) => {
-		PromotionProduit.belongsTo(models.Produit, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_produit",
-				allowNull: false,
-			},
-			as: {
-				singular: "promotion",
-				plural: "promotions",
-			},
-		});
-	};
 
 	return PromotionProduit;
 };

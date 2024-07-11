@@ -29,16 +29,5 @@ module.exports = (sequelize) => {
 		}
 	);
 
-	Magasin.associate = (models) => {
-		Magasin.hasMany(models.Achat, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "code_magasin",
-				allowNull: true,
-			},
-		});
-	};
-
 	return Magasin;
 };

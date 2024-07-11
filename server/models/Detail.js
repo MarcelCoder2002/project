@@ -1,9 +1,15 @@
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
+    const Produit = require("./Produit")(sequelize);
+
 	class Detail extends Model {
 		async getAchat() {
-			return await sequelize.models.Achat.findByPk(this.AchatCode);
+            return await this.sequelize.model("Achat").findByPk(this.achat);
+        }
+
+        async getProduit() {
+            return await this.sequelize.model("Produit").findByPk(this.produit);
 		}
 	}
 
@@ -24,6 +30,28 @@ module.exports = (sequelize) => {
 				allowNull: false,
 				defaultValue: 0,
 			},
+            produit: {
+                field: "id_produit",
+                type: DataTypes.INTEGER,
+                references: {
+                    model: Produit,
+                    key: "id",
+                },
+                allowNull: false,
+                onDelete: "CASCADE",
+                onUpdate: "CASCADE",
+            },
+            achat: {
+                field: "code_achat",
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Achat",
+                    key: "code",
+                },
+                allowNull: false,
+                onDelete: "CASCADE",
+                onUpdate: "CASCADE",
+            },
 		},
 		{
 			sequelize,
@@ -98,26 +126,6 @@ module.exports = (sequelize) => {
 			},
 		}
 	);
-
-	Detail.associate = (models) => {
-		Detail.belongsTo(models.Achat, {
-			foreignKey: {
-				field: "code_achat",
-				allowNull: false,
-			},
-			as: {
-				singular: "detail",
-				plural: "details",
-			},
-		});
-
-		Detail.belongsTo(models.Produit, {
-			foreignKey: {
-				field: "id_produit",
-				allowNull: false,
-			},
-		});
-	};
 
 	return Detail;
 };

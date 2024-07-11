@@ -4,13 +4,26 @@ module.exports = (sequelize) => {
 	const Rayon = require("./Rayon")(sequelize);
 
 	class Produit extends Model {
+        async createPromotionProduit(data = {}) {
+            data.produit = this.id;
+            return await this.sequelize.model("PromotionProduit").create(data);
+        }
+
 		async getRayon() {
-			return await Rayon.findByPk(this.RayonCode);
+            return await Rayon.findByPk(this.rayon);
 		}
 
 		async getPromotionRayon() {
 			return await (await this.getRayon()).getPromotionRayon();
 		}
+
+        async getPromotionProduit() {
+            return await this.sequelize.model("PromotionProduit").findOne({
+                where: {
+                    produit: this.id,
+                },
+            });
+        }
 
 		async getPromotion() {
 			let rayon = await this.getRayon();
@@ -69,6 +82,17 @@ module.exports = (sequelize) => {
 				allowNull: true,
 				unique: true,
 			},
+            rayon: {
+                field: "code_rayon",
+                type: DataTypes.INTEGER,
+                references: {
+                    model: Rayon,
+                    key: "code",
+                },
+                allowNull: false,
+                onDelete: "CASCADE",
+                onUpdate: "CASCADE",
+            },
 		},
 		{
 			sequelize,
@@ -77,43 +101,26 @@ module.exports = (sequelize) => {
 			timestamps: false,
 			underscored: true,
 			hooks: {
-				afterSave: (produit, options) => {
-					produit.createPromotionProduit({});
-				},
-			},
-		}
-	);
+                beforeSave: (produit, options) => {
+                    produit.ean2 = produit.ean2 === "" ? null : produit.ean2;
+                },
 
-	Produit.associate = (models) => {
-		Produit.hasMany(models.Detail, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_produit",
-				allowNull: false,
-			},
-		});
+                afterCreate: (produit, options) => {
+                    produit.createPromotionProduit(
+                        options?.$dependencies?.promotion_produit ?? {}
+                    );
+                },
 
-		Produit.hasOne(models.PromotionProduit, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_produit",
-				allowNull: false,
+                beforeUpdate: async (produit, options) => {
+                    const promotion = await produit.getPromotionProduit();
+                    await promotion.update(
+                        options?.$dependencies?.promotion_produit ?? {}
+                    );
+                    await promotion.save();
+                },
 			},
-		});
-
-		Produit.belongsTo(models.Rayon, {
-			foreignKey: {
-				field: "code_rayon",
-				allowNull: false,
-			},
-			as: {
-				singular: "produit",
-				plural: "produits",
-			},
-		});
-	};
+        }
+    );
 
 	return Produit;
 };

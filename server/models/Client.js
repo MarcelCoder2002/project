@@ -3,10 +3,28 @@ const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
 	class Client extends Model {
+        getRoles() {
+            return ["ROLE_CLIENT"];
+        }
+
+        async createAchat(data = {}) {
+            data.client = this.id;
+            return await this.sequelize.model("Achat").create(data);
+        }
+
+        async createPanierEcommerce(data = {}) {
+            data.client = this.id;
+            return await this.sequelize.model("PanierEcommerce").create(data);
+        }
+
+        async createCarteFidelite(data = {}) {
+            data.client = this.id;
+            return await this.sequelize.model("CarteFidelite").create(data);
+        }
+
 		async getCarteFidelite() {
-			const CarteFidelite = require("./CarteFidelite")(sequelize);
-			return await CarteFidelite.findOne({
-				where: { id_client: this.id },
+            return await this.sequelize.model("CarteFidelite").findOne({
+                where: {client: this.id},
 			});
 		}
 
@@ -17,15 +35,16 @@ module.exports = (sequelize) => {
 		}
 
 		async validatePanierEcommerce() {
-			const PanierEcommerce = require("./PanierEcommerce")(sequelize);
-			let details = await PanierEcommerce.findAll({
-				where: { id_client: this.id },
-			});
+            let details = await this.sequelize
+                .model("PanierEcommerce")
+                .findAll({
+                    where: {client: this.id},
+                });
 			if (details) {
 				const achat = await this.createAchat({});
 				for (let detail of details) {
 					await achat.createDetail({
-						ProduitId: detail.ProduitId,
+                        produit: detail.produit,
 						quantite: detail.quantite,
 					});
 					await detail.destroy();
@@ -36,15 +55,14 @@ module.exports = (sequelize) => {
 		}
 
 		async validatePanierMagasin() {
-			const PanierMagasin = require("./PanierMagasin")(sequelize);
-			let details = await PanierMagasin.findAll({
-				where: { id_client: this.id },
+            let details = await this.sequelize.model("PanierMagasin").findAll({
+                where: {client: this.id},
 			});
 			if (details) {
 				const achat = await this.createAchat({});
 				for (let detail of details) {
 					achat.createDetail({
-						ProduitId: detail.ProduitId,
+                        produit: detail.produit,
 						quantite: detail.quantite,
 					});
 					detail.destroy();
@@ -96,63 +114,23 @@ module.exports = (sequelize) => {
 			timestamps: false,
 			underscored: true,
 			hooks: {
-				afterSave: (client, options) => {
-					client.createCarteFidelite({});
+                afterCreate: async (client, options) => {
+                    await client.createCarteFidelite(
+                        options?.$dependencies?.carte_fidelite ?? {}
+                    );
+                },
+
+                beforeUpdate: async (client, options) => {
+                    console.log(options);
+                    const carte_fidelite = await client.getCarteFidelite();
+                    await carte_fidelite.update(
+                        options?.$dependencies?.carte_fidelite ?? {}
+                    );
+                    await carte_fidelite.save();
 				},
 			},
 		}
 	);
-
-	Client.associate = (models) => {
-		Client.hasMany(models.Reclamation, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_client",
-				allowNull: false,
-			},
-		});
-		Client.hasMany(models.ChequeCadeau, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_client",
-				allowNull: false,
-			},
-		});
-		Client.hasMany(models.Achat, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_client",
-				allowNull: false,
-			},
-		});
-		Client.hasMany(models.PanierEcommerce, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_client",
-				allowNull: false,
-			},
-		});
-		Client.hasMany(models.PanierMagasin, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_client",
-				allowNull: false,
-			},
-		});
-		Client.hasOne(models.CarteFidelite, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_client",
-				allowNull: false,
-			},
-		});
-	};
 
 	return Client;
 };

@@ -10,12 +10,23 @@ module.exports = (sequelize) => {
 				allowNull: false,
 				defaultValue: 1,
 			},
-			ProduitId: {
+            produit: {
 				field: "id_produit",
 				type: DataTypes.INTEGER,
 				references: {
 					model: "Produit",
 					key: "id",
+                },
+                allowNull: false,
+                onDelete: "CASCADE",
+                onUpdate: "CASCADE",
+            },
+            client: {
+                field: "id_client",
+                type: DataTypes.INTEGER,
+                references: {
+                    model: "Client",
+                    key: "id",
 				},
 				allowNull: false,
 				onDelete: "CASCADE",
@@ -32,8 +43,8 @@ module.exports = (sequelize) => {
 				beforeCreate: async (detail, options) => {
 					const existing = await PanierEcommerce.findOne({
 						where: {
-							ProduitId: detail.ProduitId,
-							ClientId: detail.ClientId,
+                            produit: detail.produit,
+                            client: detail.client,
 						},
 					});
 					if (existing !== null) {
@@ -44,30 +55,6 @@ module.exports = (sequelize) => {
 			},
 		}
 	);
-
-	PanierEcommerce.associate = (models) => {
-		PanierEcommerce.belongsTo(models.Client, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_client",
-				allowNull: false,
-			},
-			as: {
-				singular: "panier",
-				plural: "paniers",
-			},
-		});
-
-		PanierEcommerce.belongsTo(models.Produit, {
-			onDelete: "CASCADE",
-			onUpdate: "CASCADE",
-			foreignKey: {
-				field: "id_produit",
-				allowNull: false,
-			},
-		});
-	};
 
 	return PanierEcommerce;
 };
