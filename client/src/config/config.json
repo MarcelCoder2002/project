@@ -1,0 +1,460 @@
+{
+	"tables": {
+		"admin": {
+			"fields": {
+				"id": { "form": { "visible": false } },
+				"nom": { "form": { "attributes": { "required": true } } },
+				"prenom": { "form": { "attributes": { "required": true } } },
+				"email": {
+					"form": {
+						"attributes": { "required": true, "type": "email" }
+					}
+				},
+				"adresse": {},
+				"motDePasse": {
+					"table": { "visible": false },
+					"form": { "attributes": { "type": "password" } }
+				}
+			}
+		},
+		"client": {
+			"fields": {
+				"id": { "form": { "visible": false } },
+				"nom": { "form": { "attributes": { "required": true } } },
+				"prenom": { "form": { "attributes": { "required": true } } },
+				"email": {
+					"form": {
+						"attributes": { "required": true, "type": "email" }
+					}
+				},
+				"adresse": {},
+				"motDePasse": {
+					"table": { "visible": false },
+					"form": { "attributes": { "type": "password" } }
+				}
+			},
+			"dependencies": {
+				"carte_fidelite": {
+					"unique": true
+				}
+			}
+		},
+		"rayon": {
+			"id": "code",
+			"option": { "format": "%nom%" },
+			"fields": {
+				"code": { "form": { "visible": false } },
+				"nom": { "form": { "attributes": { "required": true } } },
+				"regle": {
+					"external": true,
+					"table": { "visible": false },
+					"form": {
+						"attributes": {
+							"type": "select",
+							"multiple": false,
+							"required": false
+						}
+					}
+				}
+			},
+			"dependencies": {
+				"promotion_rayon": {
+					"unique": true
+				}
+			}
+		},
+		"produit": {
+			"fields": {
+				"id": { "form": { "visible": false } },
+				"nom": {
+					"form": { "attributes": { "required": true } }
+				},
+				"description": {
+					"form": { "attributes": { "type": "textarea" } }
+				},
+				"prix": {
+					"table": {
+						"formatter": "price"
+					},
+					"form": {
+						"attributes": {
+							"required": true,
+							"defaultValue": 0,
+							"type": "number",
+							"step": 0.01
+						}
+					}
+				},
+				"ean1": { "form": { "attributes": { "required": true } } },
+				"ean2": {},
+				"rayon": {
+					"external": true,
+					"table": {
+						"visible": false
+					},
+					"form": {
+						"attributes": {
+							"type": "select",
+							"multiple": false,
+							"required": true
+						}
+					}
+				}
+			},
+			"dependencies": {
+				"promotion_produit": { "unique": true }
+			}
+		},
+		"regle": {
+			"name": "multiplicite",
+			"option": {
+				"format": "%multiplicite% - de %dateDebut% à %dateFin%",
+				"defaultValues": [{ "value": "", "label": "Par defaut" }]
+			},
+			"fields": {
+				"id": { "form": { "visible": false } },
+				"multiplicite": {
+					"form": {
+						"attributes": {
+							"required": true,
+							"type": "number",
+							"step": 1
+						}
+					}
+				},
+				"dateDebut": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": {
+						"attributes": {
+							"required": true,
+							"type": "datetime-local"
+						}
+					}
+				},
+				"dateFin": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": {
+						"attributes": {
+							"type": "datetime-local"
+						}
+					}
+				}
+			}
+		},
+		"reclamation": {
+			"fields": {
+				"id": { "form": { "visible": false } },
+				"objet": { "form": { "attributes": { "required": true } } },
+				"contenu": {
+					"form": {
+						"attributes": {
+							"required": true,
+							"type": "textarea"
+						}
+					}
+				},
+				"statut": {
+					"form": {
+						"visibleFor": ["ROLE_ADMIN"],
+						"attributes": {
+							"required": true,
+							"type": "select",
+							"defaultValue": [
+								{ "value": "En attente", "label": "En attente" },
+								{ "value": "Traité", "label": "Traité" }
+							]
+						}
+					}
+				},
+				"dateCreation": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": {
+						"visible": false,
+						"attributes": {
+							"type": "datetime-local"
+						}
+					}
+				},
+				"dateModification": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": {
+						"visible": false,
+						"attributes": {
+							"type": "datetime-local"
+						}
+					}
+				},
+				"client": {
+					"external": true,
+					"table": {
+						"visible": false
+					},
+					"form": {
+						"visible": false
+					}
+				}
+			},
+			"actions": {
+				"new": {
+					"roles": ["ROLE_CLIENT"]
+				},
+				"show": {},
+				"edit": {
+					"roles": ["ROLE_ADMIN"]
+				},
+				"delete": {
+					"roles": ["ROLE_CLIENT"]
+				}
+			}
+		},
+		"promotion_produit": {
+			"menu": false,
+			"fields": {
+				"id": { "form": { "visible": false } },
+				"pourcentage": {
+					"table": {
+						"formatter": "percentage"
+					},
+					"form": {
+						"attributes": {
+							"required": true,
+							"type": "number",
+							"step": 0.01,
+							"min": 0,
+							"max": 100,
+							"defaultValue": 0
+						}
+					}
+				},
+				"dateDebut": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": {
+						"attributes": {
+							"required": true,
+							"type": "datetime-local",
+							"defaultValue": "now"
+						}
+					}
+				},
+				"dateFin": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": {
+						"attributes": {
+							"type": "datetime-local"
+						}
+					}
+				},
+				"produit": {
+					"external": true,
+					"table": { "visible": false },
+					"form": { "visible": false }
+				}
+			}
+		},
+		"promotion_rayon": {
+			"menu": false,
+			"fields": {
+				"id": { "form": { "visible": false } },
+				"pourcentage": {
+					"table": {
+						"formatter": "percentage"
+					},
+					"form": {
+						"attributes": {
+							"required": true,
+							"type": "number",
+							"step": 0.01,
+							"min": 0,
+							"max": 100,
+							"defaultValue": 0
+						}
+					}
+				},
+				"dateDebut": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": {
+						"attributes": {
+							"required": true,
+							"type": "datetime-local",
+							"defaultValue": "now"
+						}
+					}
+				},
+				"dateFin": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": {
+						"attributes": {
+							"type": "datetime-local"
+						}
+					}
+				},
+				"rayon": {
+					"external": true,
+					"table": { "visible": false },
+					"form": { "visible": false }
+				}
+			}
+		},
+		"carte_fidelite": {
+			"menu": false,
+			"id": "code",
+			"fields": {
+				"code": {
+					"form": {
+						"attributes": { "required": true }
+					}
+				},
+				"point": {
+					"form": {
+						"attributes": {
+							"type": "number",
+							"required": true,
+							"min": 0,
+							"defaultValue": 0
+						}
+					}
+				},
+				"reste": {
+					"form": {
+						"attributes": {
+							"type": "number",
+							"required": true,
+							"min": 0,
+							"defaultValue": 0,
+							"step": 0.01
+						}
+					}
+				},
+				"client": {
+					"external": true,
+					"table": { "visible": false },
+					"form": { "visible": false }
+				}
+			}
+		},
+		"cheque_cadeau": {
+			"fields": {
+				"id": { "form": { "visible": false } },
+				"code": {
+					"form": {
+						"attributes": { "required": true }
+					}
+				},
+				"statut": {
+					"form": {
+						"attributes": {
+							"required": true,
+							"type": "select",
+							"defaultValue": [
+								{ "value": "En attente", "label": "En attente" },
+								{ "value": "Récupéré", "label": "Récupéré" },
+								{ "value": "Consommé", "label": "Consommé" },
+								{ "value": "Expiré", "label": "Expiré" }
+							]
+						}
+					}
+				},
+				"dateExpiration": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": {
+						"attributes": {
+							"type": "datetime-local"
+						}
+					}
+				},
+				"dateCreation": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": { "visible": false }
+				},
+				"dateModification": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": { "visible": false }
+				},
+				"client": {
+					"external": true,
+					"table": { "visible": false },
+					"form": { "visible": false }
+				}
+			},
+			"actions": {
+				"show": {},
+				"edit": {
+					"roles": ["ROLE_ADMIN"]
+				}
+			}
+		}
+	},
+	"domains": {
+		"admin": {
+			"title": "Administration",
+			"roles": ["ROLE_ADMIN"]
+		},
+		"profile": {
+			"roles": ["ROLE_CLIENT"]
+		}
+	},
+	"menu": {
+		"management": {
+			"domains": ["admin"],
+			"roles": ["ROLE_ADMIN"],
+			"title": "Gestion",
+			"subMenus": {
+				"admin": {
+					"icon": "fa-user"
+				},
+				"client": {
+					"icon": "fa-user"
+				},
+				"produit": {
+					"icon": "fa-star"
+				},
+				"rayon": {},
+				"regle": {},
+				"reclamation": {},
+				"cheque_cadeau": {}
+			}
+		},
+		"complaint":{
+			"title": "Réclamation",
+			"domains": ["profile"],
+			"roles": ["ROLE_CLIENT"]
+		},
+		"cart":{
+			"title": "Panier",
+			"domains": ["profile"],
+			"roles": ["ROLE_CLIENT"]
+		},
+		"fidelity_card":{
+			"title": "Carte fidélité",
+			"domains": ["profile"],
+			"roles": ["ROLE_CLIENT"]
+		},
+		"gifts":{
+			"title": "Chèques cadeau",
+			"domains": ["profile"],
+			"roles": ["ROLE_CLIENT"]
+		}
+	}
+}
