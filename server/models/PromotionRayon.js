@@ -48,17 +48,17 @@ module.exports = (sequelize) => {
 				type: DataTypes.DATE,
 				allowNull: true,
 			},
-            rayon: {
-                field: "code_rayon",
-                type: DataTypes.INTEGER,
-                references: {
-                    model: "Rayon",
-                    key: "code",
-                },
-                allowNull: false,
-                onDelete: "CASCADE",
-                onUpdate: "CASCADE",
-            },
+			rayon: {
+				field: "code_rayon",
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Rayon",
+					key: "code",
+				},
+				allowNull: false,
+				onDelete: "CASCADE",
+				onUpdate: "CASCADE",
+			},
 		},
 		{
 			sequelize,
@@ -66,12 +66,6 @@ module.exports = (sequelize) => {
 			tableName: "promotion_rayon",
 			timestamps: false,
 			underscored: true,
-            hooks: {
-                beforeSave: (promotion, options) => {
-                    promotion.dateFin =
-                        promotion.dateFin === "" ? null : promotion.dateFin;
-                },
-            },
 		}
 	);
 

@@ -1,33 +1,35 @@
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
-    const Regle = require("./Regle")(sequelize);
-    const PromotionRayon = require("./PromotionRayon")(sequelize);
+	const Regle = require("./Regle")(sequelize);
+	const PromotionRayon = require("./PromotionRayon")(sequelize);
 
 	class Rayon extends Model {
-        async createProduit(data = {}) {
-            data.rayon = this.code;
-            return await this.sequelize.model("Produit").create(data);
-        }
-
-        async createPromotionRayon(data = {}) {
-            data.rayon = this.code;
-            return await PromotionRayon.create(data);
-        }
-
-		async getPromotionRayon() {
-			return await PromotionRayon.findOne({
-				where: { code_rayon: this.code },
-			});
+		async createProduit(data = {}, options = {}) {
+			data.rayon = this.code;
+			return await this.sequelize.model("Produit").create(data, options);
 		}
 
-		async getRegle() {
+		async createPromotionRayon(data = {}, options = {}) {
+			data.rayon = this.code;
+			return await PromotionRayon.create(data, options);
+		}
+
+		async getPromotionRayon(options = {}) {
+			options.where = {
+				...(options?.where ?? {}),
+				rayon: this.code,
+			};
+			return await PromotionRayon.findOne(options);
+		}
+
+		async getRegle(options = {}) {
 			const Regle = require("./Regle")(sequelize);
-            return await Regle.findByPk(this.regle);
+			return await Regle.findByPk(this.regle, options);
 		}
 
-		async hasPromotion() {
-			let promotion = await this.getPromotionRayon();
+		async hasPromotion(options = {}) {
+			let promotion = await this.getPromotionRayon(options);
 			return promotion.pourcentage > 0 && promotion.isValid();
 		}
 	}
@@ -44,11 +46,11 @@ module.exports = (sequelize) => {
 				type: DataTypes.STRING,
 				allowNull: false,
 			},
-            regle: {
+			regle: {
 				field: "id_regle",
 				type: DataTypes.INTEGER,
 				references: {
-                    model: Regle,
+					model: Regle,
 					key: "id",
 				},
 				allowNull: true,
@@ -63,26 +65,22 @@ module.exports = (sequelize) => {
 			timestamps: false,
 			underscored: true,
 			hooks: {
-                beforeSave: (rayon, options) => {
-                    rayon.regle = rayon.regle === "" ? null : rayon.regle;
-                },
+				afterCreate: (rayon, options) => {
+					rayon.createPromotionRayon(
+						options?.$dependencies?.promotion_rayon ?? {}
+					);
+				},
 
-                afterCreate: (rayon, options) => {
-                    rayon.createPromotionRayon(
-                        options?.$dependencies?.promotion_rayon ?? {}
-                    );
-                },
-
-                beforeUpdate: async (rayon, options) => {
-                    const promotion = await rayon.getPromotionRayon();
-                    await promotion.update(
-                        options?.$dependencies?.promotion_rayon ?? {}
-                    );
-                    await promotion.save();
-                },
+				beforeUpdate: async (rayon, options) => {
+					const promotion = await rayon.getPromotionRayon();
+					await promotion.update(
+						options?.$dependencies?.promotion_rayon ?? {}
+					);
+					await promotion.save();
+				},
 			},
-        }
-    );
+		}
+	);
 
 	return Rayon;
 };

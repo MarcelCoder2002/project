@@ -1,6 +1,8 @@
 import { Form as _Form, Link } from "react-router-dom";
-import Table from "../utils/config/Table";
+import Table from "../../utils/config/Table";
 import BaseForm from "./BaseForm";
+import { useContext } from "react";
+import { RequestContext } from "../../hooks/useRequest";
 
 export default function Form({
 	name,
@@ -12,7 +14,12 @@ export default function Form({
 }) {
 	const table = new Table(name);
 	const dependencies = Array.from(table.getDependencyObjects().values());
-	const hasInternal = table.hasDependency();
+	const action = props.method === "post" ? "new" : "edit";
+	const request = useContext(RequestContext);
+	const hasInternal = table.hasDependencyFormForUserAndAction(
+		request.getUser(),
+		action
+	);
 
 	return (
 		<_Form style={{ padding: 0, margin: 0 }} {...props}>
@@ -23,6 +30,7 @@ export default function Form({
 						title={title}
 						data={data}
 						dependenciesData={dependenciesData}
+						action={action}
 					/>
 				</div>
 				{!hasInternal ? null : (
@@ -37,6 +45,7 @@ export default function Form({
 										dependency.getName()
 									]?.data?.[0] ?? null
 								}
+								action={action}
 							/>
 						))}
 					</div>

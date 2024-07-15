@@ -4,41 +4,46 @@ module.exports = (sequelize) => {
 	const Rayon = require("./Rayon")(sequelize);
 
 	class Produit extends Model {
-        async createPromotionProduit(data = {}) {
-            data.produit = this.id;
-            return await this.sequelize.model("PromotionProduit").create(data);
-        }
-
-		async getRayon() {
-            return await Rayon.findByPk(this.rayon);
+		async createPromotionProduit(data = {}, options = {}) {
+			data.produit = this.id;
+			return await this.sequelize
+				.model("PromotionProduit")
+				.create(data, options);
 		}
 
-		async getPromotionRayon() {
-			return await (await this.getRayon()).getPromotionRayon();
+		async getRayon(options = {}) {
+			return await Rayon.findByPk(this.rayon, options);
 		}
 
-        async getPromotionProduit() {
-            return await this.sequelize.model("PromotionProduit").findOne({
-                where: {
-                    produit: this.id,
-                },
-            });
-        }
+		async getPromotionRayon(options = {}) {
+			return await (await this.getRayon()).getPromotionRayon(options);
+		}
 
-		async getPromotion() {
+		async getPromotionProduit(options = {}) {
+			options.where = {
+				...(options?.where ?? {}),
+				produit: this.id,
+			};
+			return await this.sequelize
+				.model("PromotionProduit")
+				.findOne(options);
+		}
+
+		async getPromotion(options = {}) {
 			let rayon = await this.getRayon();
 			if (await rayon.hasPromotion()) {
-				return await rayon.getPromotionRayon();
+				return await rayon.getPromotionRayon(options);
 			} else if (await this.hasPromotion()) {
-				return await this.getPromotionProduit();
+				return await this.getPromotionProduit(options);
 			} else {
 				return null;
 			}
 		}
 
 		async hasValidPromotion() {
-			let valid = await (await this.getRayon()).hasPromotion();
-			return valid ? valid : await this.hasPromotion();
+			return (await (await this.getRayon()).hasPromotion())
+				? true
+				: await this.hasPromotion();
 		}
 
 		async hasPromotion() {
@@ -82,17 +87,17 @@ module.exports = (sequelize) => {
 				allowNull: true,
 				unique: true,
 			},
-            rayon: {
-                field: "code_rayon",
-                type: DataTypes.INTEGER,
-                references: {
-                    model: Rayon,
-                    key: "code",
-                },
-                allowNull: false,
-                onDelete: "CASCADE",
-                onUpdate: "CASCADE",
-            },
+			rayon: {
+				field: "code_rayon",
+				type: DataTypes.INTEGER,
+				references: {
+					model: Rayon,
+					key: "code",
+				},
+				allowNull: false,
+				onDelete: "CASCADE",
+				onUpdate: "CASCADE",
+			},
 		},
 		{
 			sequelize,
@@ -101,26 +106,22 @@ module.exports = (sequelize) => {
 			timestamps: false,
 			underscored: true,
 			hooks: {
-                beforeSave: (produit, options) => {
-                    produit.ean2 = produit.ean2 === "" ? null : produit.ean2;
-                },
+				afterCreate: (produit, options) => {
+					produit.createPromotionProduit(
+						options?.$dependencies?.promotion_produit ?? {}
+					);
+				},
 
-                afterCreate: (produit, options) => {
-                    produit.createPromotionProduit(
-                        options?.$dependencies?.promotion_produit ?? {}
-                    );
-                },
-
-                beforeUpdate: async (produit, options) => {
-                    const promotion = await produit.getPromotionProduit();
-                    await promotion.update(
-                        options?.$dependencies?.promotion_produit ?? {}
-                    );
-                    await promotion.save();
-                },
+				beforeUpdate: async (produit, options) => {
+					const promotion = await produit.getPromotionProduit();
+					await promotion.update(
+						options?.$dependencies?.promotion_produit ?? {}
+					);
+					await promotion.save();
+				},
 			},
-        }
-    );
+		}
+	);
 
 	return Produit;
 };

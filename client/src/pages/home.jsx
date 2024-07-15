@@ -8,12 +8,12 @@ import ControlSidebar from "../components/ControlSidebar";
 import "../../plugins/jquery/jquery.min.js";
 import "../../plugins/bootstrap/js/bootstrap.bundle.min.js";
 import "../../dist/js/adminlte.min.js";
-import {RequestContext} from "../hooks/useRequest.js";
+import { RequestContext } from "../hooks/useRequest.js";
 
 export default function Home() {
-	const location = useLocation();
+	// const location = useLocation();
 	const request = useRouteLoaderData("index");
-	document.body.className = "hold-transition sidebar-mini layout-fixed";
+	const isLoginPage = location.pathname.endsWith("/login");
 
 	useEffect(() => {
 		$(function () {
@@ -23,13 +23,22 @@ export default function Home() {
 
 	return (
 		<>
-			{location.pathname.endsWith("login") ? (
-				<Outlet />
+			{isLoginPage ? (
+				<>
+					{(() => {
+						document.body.className = "hold-transition login-page";
+					})()}
+					<Outlet />
+				</>
 			) : (
 				<RequestContext.Provider value={request}>
+					{(() => {
+						document.body.className =
+							"hold-transition sidebar-mini layout-fixed";
+					})()}
 					<div className="wrapper">
 						<Navbar />
-						<Sidebar/>
+						<Sidebar />
 						<Outlet />
 						<ControlSidebar />
 						<Footer />

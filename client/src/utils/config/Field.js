@@ -6,7 +6,7 @@ import {
 	formatPercentage,
 } from "../format";
 import Table from "./Table";
-import {containsAll} from "../array.js";
+import { containsAll } from "../array.js";
 
 const formatters = {
 	default: (value) => `${value ?? ""}`,
@@ -69,9 +69,20 @@ class Field {
 
 	isVisibleInFormForUser(user) {
 		return this._data?.form?.visible ??
-		this.getFormVisibleFor().includes("PUBLIC_ACCESS") ?
-			true :
-			containsAll(user.getRoles(), this.getFormVisibleFor());
+			this.getFormVisibleFor().includes("PUBLIC_ACCESS")
+			? true
+			: containsAll(user.getRoles(), this.getFormVisibleFor());
+	}
+
+	isVisibleInFormForUserAndAction(user, action) {
+		return (
+			this.isVisibleInFormForAction(action) &&
+			this.isVisibleInFormForUser(user)
+		);
+	}
+
+	isVisibleInFormForAction(action) {
+		return this._data?.form?.[action] ?? true;
 	}
 
 	getFormVisibleFor() {
@@ -87,9 +98,21 @@ class Field {
 	}
 
 	getFormAttributesType() {
-		return this._data?.form?.attributes?.type ?? this.isExternal()
-			? "select"
-			: "text";
+		return (
+			this._data?.form?.attributes?.type ??
+			(this.isExternal() ? "select" : "text")
+		);
+	}
+
+	getFormAttributesForAction(action) {
+		return {
+			...(this._data?.form?.actions?.[action]?.attributes ?? {}),
+			...this.getFormAttributes(),
+		};
+	}
+
+	getFormValue() {
+		return this._data?.form?.value ?? null;
 	}
 
 	getFormAttributesDefaultValue() {
@@ -107,6 +130,10 @@ class Field {
 			}
 		}
 		return def ?? "";
+	}
+
+	getFormAttributesMultiple() {
+		return this._data.form?.multiple ?? false;
 	}
 }
 

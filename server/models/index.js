@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
 const process = require("process");
+const { snakeToCamel } = require("../src/utils");
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/../config/config.json")[env];
@@ -41,6 +42,33 @@ fs.readdirSync(__dirname)
 Object.keys(db).forEach((modelName) => {
 	if (db[modelName].associate) {
 		db[modelName].associate(db);
+	}
+});
+
+sequelize.addHook("afterFind", async (models, options) => {
+	const includes = options?.includes;
+	if (!Array.isArray(models)) {
+		models = [models];
+	}
+	for (const model of models) {
+		if (includes) {
+			model.dataValues.includes = {};
+			for (const [include, value] of Object.entries(includes)) {
+				model.dataValues.includes[include] = await model[
+					`get${snakeToCamel(include)}`
+				](value);
+			}
+		}
+	}
+});
+
+sequelize.addHook("beforeSave", async (model, options) => {
+	for (const [key, value] of Object.entries(
+		model.modelDefinition?.attributes ?? model.rawAttributes
+	)) {
+		if (value.allowNull && model[key] === "") {
+			model[key] = null;
+		}
 	}
 });
 

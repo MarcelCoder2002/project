@@ -1,17 +1,17 @@
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
-    const Client = require("./Client")(sequelize);
-    const Magasin = require("./Magasin")(sequelize);
+	const Client = require("./Client")(sequelize);
+	const Magasin = require("./Magasin")(sequelize);
 
 	class Achat extends Model {
-        async createDetail(data = {}) {
-            data.achat = this.code;
-            return await this.sequelize.model("Detail").create(data);
-        }
+		async createDetail(data = {}, options = {}) {
+			data.achat = this.code;
+			return await this.sequelize.model("Detail").create(data, options);
+		}
 
-		async getClient() {
-            return await Client.findByPk(this.client);
+		async getClient(options = {}) {
+			return await Client.findByPk(this.client, options);
 		}
 	}
 
@@ -33,27 +33,27 @@ module.exports = (sequelize) => {
 				allowNull: false,
 				defaultValue: 0,
 			},
-            client: {
+			client: {
 				field: "id_client",
 				type: DataTypes.INTEGER,
 				references: {
-                    model: Client,
+					model: Client,
 					key: "id",
 				},
 				allowNull: false,
 				onDelete: "CASCADE",
 				onUpdate: "CASCADE",
-            },
-            magasin: {
-                field: "code_magasin",
-                type: DataTypes.INTEGER,
-                references: {
-                    model: Magasin,
-                    key: "code",
-                },
-                allowNull: true,
-                onDelete: "CASCADE",
-                onUpdate: "CASCADE",
+			},
+			magasin: {
+				field: "code_magasin",
+				type: DataTypes.INTEGER,
+				references: {
+					model: Magasin,
+					key: "code",
+				},
+				allowNull: true,
+				onDelete: "CASCADE",
+				onUpdate: "CASCADE",
 			},
 		},
 		{
@@ -62,13 +62,8 @@ module.exports = (sequelize) => {
 			tableName: "achat",
 			timestamps: false,
 			underscored: true,
-            hooks: {
-                beforeSave: (achat, options) => {
-                    achat.magasin = achat.magasin === "" ? null : achat.magasin;
-                },
-			},
-        }
-    );
+		}
+	);
 
 	return Achat;
 };

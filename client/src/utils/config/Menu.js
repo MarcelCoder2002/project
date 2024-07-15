@@ -30,7 +30,7 @@ class Menu {
 
 	getIcon() {
 		return this._data?.icon
-			? `far ${this._data?.icon} nav-icon`
+			? `${this._data?.icon} nav-icon`
 			: "far fa-circle nav-icon";
 	}
 
@@ -94,7 +94,6 @@ class Menu {
 		if (!domain instanceof Domain) {
 			domain = Domain.getDomain(domain);
 		}
-		console.log(this.getDomain(domain.getName()));
 		return !!this.getDomain(domain.getName());
 	}
 
@@ -147,7 +146,6 @@ class Menu {
 		this.getMenu("");
 		const menus = [];
 		for (const [name, menu] of this._menus) {
-			console.log(domain.getName())
 			if (
 				menu.getRoles().includes("PUBLIC_ACCESS") ||
 				containsAll(roles, menu.getRoles())

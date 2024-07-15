@@ -1,10 +1,7 @@
 import { snakeToCapitalCase } from "../utils/format";
-import { Form, NavLink, useLocation, useParams } from "react-router-dom";
+import { Form, NavLink, useParams } from "react-router-dom";
 import Table from "../utils/config/Table";
-import { useEffect, useState } from "react";
-
-// import "../../plugins/datatables/jquery.dataTables";
-// import "../../plugins/datatables-buttons/js/dataTables.buttons";
+import { useEffect } from "react";
 
 import "../../plugins/datatables/jquery.dataTables.min.js";
 import "../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js";
@@ -14,7 +11,6 @@ import "../../plugins/datatables-buttons/js/dataTables.buttons.min.js";
 import "../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js";
 import "../../plugins/jszip/jszip.min.js";
 import "../../plugins/pdfmake/pdfmake.min.js";
-// import "../../plugins/pdfmake/vfs_fonts.js";
 import "../../plugins/datatables-buttons/js/buttons.html5.min.js";
 import "../../plugins/datatables-buttons/js/buttons.print.min.js";
 import "../../plugins/datatables-buttons/js/buttons.colVis.min.js";
@@ -28,20 +24,13 @@ export default function DataTable({ actions, tableName, rows = [] }) {
 		const t = $("#datatable").DataTable({
 			layout: {
 				topStart: {
-					buttons: [
-						"copy",
-						"csv",
-						"excel",
-						// "pdf",
-						"print",
-						"colvis",
-					],
+					buttons: ["copy", "csv", "excel", "print"],
 				},
 			},
 			destroy: true,
 			responsive: true,
 			lengthChange: false,
-			autoWidth: true,
+			autoWidth: false,
 			ordering: true,
 			paging: true,
 		});
@@ -58,7 +47,9 @@ export default function DataTable({ actions, tableName, rows = [] }) {
 	return (
 		<div className="card">
 			<div className="card-header">
-				<h3 className="card-title">{snakeToCapitalCase(tableName ?? name)}</h3>
+				<h3 className="card-title">
+					{snakeToCapitalCase(tableName ?? name)}
+				</h3>
 			</div>
 			{/* <!-- /.card-header --> */}
 			<div className="card-body">

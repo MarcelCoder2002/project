@@ -1,6 +1,7 @@
 import { Route, Outlet } from "react-router-dom";
 import Home, { Router as HomeRouter, loader as homeLoader } from "./home";
-import Login, {action as loginAction} from "../../components/Login";
+import Login, { action as loginAction } from "../../components/Login";
+import useAuthenticatedUser from "../../hooks/useAuthenticatedUser";
 
 export function Router() {
 	return (
@@ -22,6 +23,7 @@ export function Router() {
 }
 
 function Admin() {
+	useAuthenticatedUser("ROLE_ADMIN", "/admin/login");
 	return (
 		<>
 			<Outlet />

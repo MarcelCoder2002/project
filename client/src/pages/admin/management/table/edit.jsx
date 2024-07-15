@@ -1,6 +1,6 @@
 import { redirect, useLoaderData, useParams } from "react-router-dom";
 import Content from "../../../../components/Content";
-import Form from "../../../../components/Form";
+import Form from "../../../../components/form/Form";
 import Header from "../../../../components/Header";
 import {
 	formDataToJSON,
@@ -50,43 +50,49 @@ export const action = async ({ request, params }) => {
 };
 
 export const loader = async ({ params }) => {
-	const { id, name } = params;
-	const data = (await get(`http://localhost:8000/api/table/${name}/${id}`))
-		.data;
+	try {
+		const { id, name } = params;
+		const data = (
+			await get(`http://localhost:8000/api/table/${name}/${id}`)
+		).data;
 
-	const table = new Table(name);
-	const dependenciesData = {
-		internal: {},
-		external: {},
-	};
-
-	const query = qs.stringify({
-		where: {
-			[name]: id,
-		},
-	});
-
-	for (const dependency of table.getDependencies()) {
-		dependenciesData.internal[dependency] = {
-			data: (
-				await get(
-					`http://localhost:8000/api/table/${dependency}?${query}`
-				)
-			).data,
+		const table = new Table(name);
+		const dependenciesData = {
+			internal: {},
+			external: {},
 		};
-	}
 
-	for (const dependency of table.getExternalFields()) {
-		dependenciesData.external[dependency] = {
-			data: (await get(`http://localhost:8000/api/table/${dependency}`))
-				.data,
+		const query = qs.stringify({
+			where: {
+				[name]: id,
+			},
+		});
+
+		for (const dependency of table.getDependencies()) {
+			dependenciesData.internal[dependency] = {
+				data: (
+					await get(
+						`http://localhost:8000/api/table/${dependency}?${query}`
+					)
+				).data,
+			};
+		}
+
+		for (const dependency of table.getExternalFields()) {
+			dependenciesData.external[dependency] = {
+				data: (
+					await get(`http://localhost:8000/api/table/${dependency}`)
+				).data,
+			};
+		}
+
+		return {
+			defaultData: data,
+			dependenciesData: dependenciesData,
 		};
+	} catch (error) {
+		return redirect("/admin/login");
 	}
-
-	return {
-		defaultData: data,
-		dependenciesData: dependenciesData,
-	};
 };
 
 export default function Edit({ links }) {

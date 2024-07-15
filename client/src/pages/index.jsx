@@ -48,7 +48,7 @@ function Index() {
 							element={<Home />}
 							loader={loader}
 						>
-							<Route path="store" element={<Store />}>
+							<Route path="" element={<Store />}>
 								{StoreRouter()}
 							</Route>
 							<Route path="profile" element={<Profile />}>

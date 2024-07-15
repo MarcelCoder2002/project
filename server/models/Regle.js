@@ -2,11 +2,11 @@ const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
 	class Regle extends Model {
-        async getRayons() {
-            return await sequelize
-                .model("Rayon")
-                .findAll({where: {regle: this.id}});
-        }
+		async getRayons() {
+			return await sequelize
+				.model("Rayon")
+				.findAll({ where: { regle: this.id } });
+		}
 
 		isIndefinite() {
 			let now = new Date();
@@ -48,7 +48,7 @@ module.exports = (sequelize) => {
 			dateFin: {
 				field: "date_fin",
 				type: DataTypes.DATE,
-                allowNull: true,
+				allowNull: true,
 			},
 		},
 		{
@@ -57,20 +57,16 @@ module.exports = (sequelize) => {
 			tableName: "regle",
 			timestamps: false,
 			underscored: true,
-            hooks: {
-                beforeDestroy: async (regle, options) => {
-                    for (const rayon of await regle.getRayons()) {
-                        await rayon.update({regle: null});
-                        await rayon.save();
-                    }
-                },
-
-                beforeSave: (regle, options) => {
-                    regle.dateFin = regle.dateFin === "" ? null : regle.dateFin;
-                },
-            },
-        }
-    );
+			hooks: {
+				beforeDestroy: async (regle, options) => {
+					for (const rayon of await regle.getRayons()) {
+						await rayon.update({ regle: null });
+						await rayon.save();
+					}
+				},
+			},
+		}
+	);
 
 	return Regle;
 };

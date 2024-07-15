@@ -49,35 +49,12 @@ server.on("listening", () => {
 });
 
 db.sequelize.sync().then(async () => {
-    // const rayon = await db.Rayon.create({
-    // 	nom: "Cereales",
-    // });
-    // rayon
-    // 	.createProduit({
-    // 		nom: "Riz 1Kg",
-    // 		prix: 17.95,
-    // 	})
-    // 	.then((produit) => {
-    // 		db.Client.create({
-    // 			nom: "Goumou",
-    // 			prenom: "Marcel Raymond",
-    // 			email: "marcelraymondgoumou@gmail.com",
-    // 			motDePasse: "password",
-    // 			adresse: "Agadir",
-    // 		}).then(async (client) => {
-    // 			await client.createPanierEcommerce({
-    // 				produit: produit.id,
-    // 				quantite: 3,
-    // 			});
-    // 			await client.validatePanierEcommerce();
-    // 		});
-    // 	});
-    // await db.Admin.create({
-    // 	nom: "Admin",
-    // 	prenom: "Adminer",
-    // 	email: "admin@gmail.com",
-    // 	motDePasse: "admin",
-    // 	adresse: "Agadir",
-    // });
+	// await db.Admin.create({
+	// 	nom: "Admin",
+	// 	prenom: "Adminer",
+	// 	email: "admin@gmail.com",
+	// 	motDePasse: "admin",
+	// 	adresse: "Agadir",
+	// });
 	server.listen(port);
 });

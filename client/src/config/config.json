@@ -13,7 +13,16 @@
 				"adresse": {},
 				"motDePasse": {
 					"table": { "visible": false },
-					"form": { "attributes": { "type": "password" } }
+					"form": {
+						"attributes": { "type": "password" },
+						"actions": {
+							"new": {
+								"attributes": {
+									"required": true
+								}
+							}
+						}
+					}
 				}
 			}
 		},
@@ -30,7 +39,16 @@
 				"adresse": {},
 				"motDePasse": {
 					"table": { "visible": false },
-					"form": { "attributes": { "type": "password" } }
+					"form": {
+						"attributes": { "type": "password" },
+						"actions": {
+							"new": {
+								"attributes": {
+									"required": true
+								}
+							}
+						}
+					}
 				}
 			},
 			"dependencies": {
@@ -148,11 +166,28 @@
 		"reclamation": {
 			"fields": {
 				"id": { "form": { "visible": false } },
-				"objet": { "form": { "attributes": { "required": true } } },
-				"contenu": {
+				"objet": {
 					"form": {
+						"visibleFor": ["ROLE_CLIENT"],
+						"attributes": { "required": true }
+					}
+				},
+				"contenu": {
+					"table": {
+						"expandable": true
+					},
+					"form": {
+						"visibleFor": ["ROLE_CLIENT"],
 						"attributes": {
 							"required": true,
+							"type": "textarea"
+						}
+					}
+				},
+				"reponse": {
+					"form": {
+						"visibleFor": ["ROLE_ADMIN"],
+						"attributes": {
 							"type": "textarea"
 						}
 					}
@@ -160,13 +195,16 @@
 				"statut": {
 					"form": {
 						"visibleFor": ["ROLE_ADMIN"],
+						"value": [
+							{
+								"value": "En attente",
+								"label": "En attente"
+							},
+							{ "value": "Traité", "label": "Traité" }
+						],
 						"attributes": {
 							"required": true,
-							"type": "select",
-							"defaultValue": [
-								{ "value": "En attente", "label": "En attente" },
-								{ "value": "Traité", "label": "Traité" }
-							]
+							"type": "select"
 						}
 					}
 				},
@@ -313,15 +351,17 @@
 		},
 		"carte_fidelite": {
 			"menu": false,
-			"id": "code",
 			"fields": {
+				"id": { "form": { "visible": false } },
 				"code": {
 					"form": {
-						"attributes": { "required": true }
+						"edit": false,
+						"attributes": { "required": true, "maxLength": 13 }
 					}
 				},
 				"point": {
 					"form": {
+						"visible": false,
 						"attributes": {
 							"type": "number",
 							"required": true,
@@ -332,6 +372,7 @@
 				},
 				"reste": {
 					"form": {
+						"visible": false,
 						"attributes": {
 							"type": "number",
 							"required": true,
@@ -353,20 +394,21 @@
 				"id": { "form": { "visible": false } },
 				"code": {
 					"form": {
-						"attributes": { "required": true }
+						"attributes": { "required": true, "maxLength": 13 }
 					}
 				},
 				"statut": {
 					"form": {
+						"value": [
+							{
+								"value": "En attente",
+								"label": "En attente"
+							},
+							{ "value": "Récupéré", "label": "Récupéré" }
+						],
 						"attributes": {
 							"required": true,
-							"type": "select",
-							"defaultValue": [
-								{ "value": "En attente", "label": "En attente" },
-								{ "value": "Récupéré", "label": "Récupéré" },
-								{ "value": "Consommé", "label": "Consommé" },
-								{ "value": "Expiré", "label": "Expiré" }
-							]
+							"type": "select"
 						}
 					}
 				},
@@ -422,37 +464,34 @@
 			"title": "Gestion",
 			"subMenus": {
 				"admin": {
-					"icon": "fa-user"
+					"icon": "far fa-user"
 				},
 				"client": {
-					"icon": "fa-user"
+					"icon": "far fa-user"
 				},
 				"produit": {
-					"icon": "fa-star"
+					"icon": "far fa-star"
 				},
-				"rayon": {},
+				"rayon": {
+					"icon": "far fa-gift"
+				},
 				"regle": {},
 				"reclamation": {},
 				"cheque_cadeau": {}
 			}
 		},
-		"complaint":{
-			"title": "Réclamation",
+		"purchases": {
+			"title": "Achats",
 			"domains": ["profile"],
 			"roles": ["ROLE_CLIENT"]
 		},
-		"cart":{
+		"cart": {
 			"title": "Panier",
 			"domains": ["profile"],
 			"roles": ["ROLE_CLIENT"]
 		},
-		"fidelity_card":{
-			"title": "Carte fidélité",
-			"domains": ["profile"],
-			"roles": ["ROLE_CLIENT"]
-		},
-		"gifts":{
-			"title": "Chèques cadeau",
+		"complaint": {
+			"title": "Réclamation",
 			"domains": ["profile"],
 			"roles": ["ROLE_CLIENT"]
 		}

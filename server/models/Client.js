@@ -3,29 +3,52 @@ const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
 	class Client extends Model {
-        getRoles() {
-            return ["ROLE_CLIENT"];
-        }
+		getRoles(options = {}) {
+			return ["ROLE_CLIENT"];
+		}
 
-        async createAchat(data = {}) {
-            data.client = this.id;
-            return await this.sequelize.model("Achat").create(data);
-        }
+		async getAchat(options = {}) {
+			options.where = {
+				...(options?.where ?? {}),
+				client: this.id,
+			};
+			return await this.sequelize.model("Achat").findAll(options);
+		}
 
-        async createPanierEcommerce(data = {}) {
-            data.client = this.id;
-            return await this.sequelize.model("PanierEcommerce").create(data);
-        }
+		async createAchat(data = {}, options = {}) {
+			data.client = this.id;
+			return await this.sequelize.model("Achat").create(data, options);
+		}
 
-        async createCarteFidelite(data = {}) {
-            data.client = this.id;
-            return await this.sequelize.model("CarteFidelite").create(data);
-        }
+		async createPanierEcommerce(data = {}, options = {}) {
+			data.client = this.id;
+			return await this.sequelize
+				.model("PanierEcommerce")
+				.create(data, options);
+		}
 
-		async getCarteFidelite() {
-            return await this.sequelize.model("CarteFidelite").findOne({
-                where: {client: this.id},
-			});
+		async createCarteFidelite(data = {}, options = {}) {
+			data.client = this.id;
+			return await this.sequelize
+				.model("CarteFidelite")
+				.create(data, options);
+		}
+
+		async getCarteFidelite(options = {}) {
+			options.where = {
+				...(options?.where ?? {}),
+				client: this.id,
+			};
+			return await this.sequelize.model("CarteFidelite").findOne(options);
+		}
+
+		async getPanierEcommerce(options = {}) {
+			if (options.where) {
+				options.where.client = this.id;
+			}
+			return await this.sequelize
+				.model("PanierEcommerce")
+				.findAll(options);
 		}
 
 		async validatePanier() {
@@ -35,16 +58,16 @@ module.exports = (sequelize) => {
 		}
 
 		async validatePanierEcommerce() {
-            let details = await this.sequelize
-                .model("PanierEcommerce")
-                .findAll({
-                    where: {client: this.id},
-                });
+			let details = await this.sequelize
+				.model("PanierEcommerce")
+				.findAll({
+					where: { client: this.id },
+				});
 			if (details) {
 				const achat = await this.createAchat({});
 				for (let detail of details) {
 					await achat.createDetail({
-                        produit: detail.produit,
+						produit: detail.produit,
 						quantite: detail.quantite,
 					});
 					await detail.destroy();
@@ -55,14 +78,14 @@ module.exports = (sequelize) => {
 		}
 
 		async validatePanierMagasin() {
-            let details = await this.sequelize.model("PanierMagasin").findAll({
-                where: {client: this.id},
+			let details = await this.sequelize.model("PanierMagasin").findAll({
+				where: { client: this.id },
 			});
 			if (details) {
 				const achat = await this.createAchat({});
 				for (let detail of details) {
 					achat.createDetail({
-                        produit: detail.produit,
+						produit: detail.produit,
 						quantite: detail.quantite,
 					});
 					detail.destroy();
@@ -114,19 +137,18 @@ module.exports = (sequelize) => {
 			timestamps: false,
 			underscored: true,
 			hooks: {
-                afterCreate: async (client, options) => {
-                    await client.createCarteFidelite(
-                        options?.$dependencies?.carte_fidelite ?? {}
-                    );
-                },
+				afterCreate: async (client, options) => {
+					await client.createCarteFidelite(
+						options?.$dependencies?.carte_fidelite ?? {}
+					);
+				},
 
-                beforeUpdate: async (client, options) => {
-                    console.log(options);
-                    const carte_fidelite = await client.getCarteFidelite();
-                    await carte_fidelite.update(
-                        options?.$dependencies?.carte_fidelite ?? {}
-                    );
-                    await carte_fidelite.save();
+				beforeUpdate: async (client, options) => {
+					const carte_fidelite = await client.getCarteFidelite();
+					await carte_fidelite.update(
+						options?.$dependencies?.carte_fidelite ?? {}
+					);
+					await carte_fidelite.save();
 				},
 			},
 		}

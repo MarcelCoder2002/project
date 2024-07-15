@@ -17,10 +17,14 @@ import New, { action as newAction, loader as newLoader } from "./new";
 import { action as deleteAction } from "./delete";
 import { get } from "../../../../utils/requests";
 import Table_ from "../../../../utils/config/Table";
-import { useEffect, useState } from "react";
 
 export const loader = async ({ params }) => {
-	return (await get(`http://localhost:8000/api/table/${params.name}`)).data;
+	try {
+		return (await get(`http://localhost:8000/api/table/${params.name}`))
+			.data;
+	} catch (error) {
+		return redirect("/admin/login");
+	}
 };
 
 export function Router({ links }) {
@@ -64,8 +68,6 @@ function Main({ links }) {
 	const data = useLoaderData();
 	const request = useRouteLoaderData("index");
 	const actions = request.getUser().getTableActions(name);
-
-	useEffect(() => {}, [data]);
 
 	if (!Table_.getTables().includes(name)) {
 		throw new Error("error");

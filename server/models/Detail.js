@@ -1,15 +1,19 @@
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
-    const Produit = require("./Produit")(sequelize);
+	const Produit = require("./Produit")(sequelize);
 
 	class Detail extends Model {
-		async getAchat() {
-            return await this.sequelize.model("Achat").findByPk(this.achat);
-        }
+		async getAchat(options = {}) {
+			return await this.sequelize
+				.model("Achat")
+				.findByPk(this.achat, options);
+		}
 
-        async getProduit() {
-            return await this.sequelize.model("Produit").findByPk(this.produit);
+		async getProduit(options = {}) {
+			return await this.sequelize
+				.model("Produit")
+				.findByPk(this.produit, options);
 		}
 	}
 
@@ -30,28 +34,28 @@ module.exports = (sequelize) => {
 				allowNull: false,
 				defaultValue: 0,
 			},
-            produit: {
-                field: "id_produit",
-                type: DataTypes.INTEGER,
-                references: {
-                    model: Produit,
-                    key: "id",
-                },
-                allowNull: false,
-                onDelete: "CASCADE",
-                onUpdate: "CASCADE",
-            },
-            achat: {
-                field: "code_achat",
-                type: DataTypes.INTEGER,
-                references: {
-                    model: "Achat",
-                    key: "code",
-                },
-                allowNull: false,
-                onDelete: "CASCADE",
-                onUpdate: "CASCADE",
-            },
+			produit: {
+				field: "id_produit",
+				type: DataTypes.INTEGER,
+				references: {
+					model: Produit,
+					key: "id",
+				},
+				allowNull: false,
+				onDelete: "CASCADE",
+				onUpdate: "CASCADE",
+			},
+			achat: {
+				field: "code_achat",
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Achat",
+					key: "code",
+				},
+				allowNull: false,
+				onDelete: "CASCADE",
+				onUpdate: "CASCADE",
+			},
 		},
 		{
 			sequelize,

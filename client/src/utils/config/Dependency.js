@@ -31,6 +31,13 @@ class Dependency {
 	getFormAttributes() {
 		return this._data.form?.attributes ?? {};
 	}
+
+	isFormVisibleForUserAndAction(user, action) {
+		return Table.getTable(this._name).isFormVisibleForUserAndAction(
+			user,
+			action
+		);
+	}
 }
 
 export default Dependency;

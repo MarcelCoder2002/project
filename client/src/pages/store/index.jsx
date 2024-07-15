@@ -1,22 +1,16 @@
 import { Route, Outlet } from "react-router-dom";
-import Home, { Router as HomeRouter, loader as homeLoader } from "./home";
+import Home, { loader as homeLoader } from "./home";
 
 export function Router() {
 	return (
 		<>
-			<Route element={<Home />} loader={homeLoader}>
-				{HomeRouter()}
-			</Route>
+			<Route index element={<Home />} loader={homeLoader}></Route>
 		</>
 	);
 }
 
 function Store() {
-	return (
-		<>
-			<Outlet />
-		</>
-	);
+	return <Outlet />;
 }
 
 export default Store;

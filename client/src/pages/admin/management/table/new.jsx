@@ -1,6 +1,6 @@
 import { redirect, useLoaderData, useParams } from "react-router-dom";
 import Content from "../../../../components/Content";
-import Form from "../../../../components/Form";
+import Form from "../../../../components/form/Form";
 import Header from "../../../../components/Header";
 import {
 	formDataToJSON,
@@ -47,15 +47,19 @@ export async function loader({ params }) {
 		internal: {},
 		external: {},
 	};
+	try {
+		for (const dependency of table.getExternalFields()) {
+			dependenciesData.external[dependency] = {
+				data: (
+					await get(`http://localhost:8000/api/table/${dependency}`)
+				).data,
+			};
+		}
 
-	for (const dependency of table.getExternalFields()) {
-		dependenciesData.external[dependency] = {
-			data: (await get(`http://localhost:8000/api/table/${dependency}`))
-				.data,
-		};
+		return dependenciesData;
+	} catch (error) {
+		return redirect("/admin/login");
 	}
-
-	return dependenciesData;
 }
 
 export default function New({ links }) {

@@ -1,8 +1,32 @@
 const db = require("../../models");
 const { snakeToCamel } = require("../../src/utils");
 
+exports.getCart = async (req, res, next) => {
+	if (req.user.getRoles().includes("ROLE_CLIENT")) {
+		res.json(
+			await req.user.getPanierEcommerce({
+				includes: { produit: { includes: { promotion_produit: {} } } },
+			})
+		);
+	} else {
+		res.json({});
+	}
+};
+
+exports.getPurchases = async (req, res, next) => {
+	if (req.user.getRoles().includes("ROLE_CLIENT")) {
+		res.json(
+			await req.user.getAchat({
+				includes: { detail: { includes: { produit: {} } } },
+			})
+		);
+	} else {
+		res.json({});
+	}
+};
+
 exports.index = async (req, res, next) => {
-	const data =  {
+	const data = {
 		id: req.user.id,
 		email: req.user.email,
 		nom: req.user.nom,
@@ -11,16 +35,15 @@ exports.index = async (req, res, next) => {
 		roles: req.user.getRoles(),
 	};
 
-
-	if (req.query?.include && req.user.getRoles().includes('ROLE_CLIENT')) {
+	if (req.query?.include && req.user.getRoles().includes("ROLE_CLIENT")) {
 		data.includes = {};
 		for (const table of req.query.include) {
 			try {
 				const Model = db[snakeToCamel(table)];
-				data.includes[table] = await Model.findAll({where: {client: req.user.id}});
-			} catch (error) {
-
-			}
+				data.includes[table] = await Model.findAll({
+					where: { client: req.user.id },
+				});
+			} catch (error) {}
 		}
 	}
 
@@ -57,11 +80,12 @@ exports.show = async (req, res, next) => {
 		if (["admin", "client"].includes(req.params.name)) {
 			options.attributes = { exclude: ["motDePasse"] };
 		}
-		let model = (await Model.findByPk(req.params.id, options)) ?? {}
-		if (req.user.getRoles().includes('ROLE_CLIENT')) {
+		let model = (await Model.findByPk(req.params.id, options)) ?? {};
+		if (req.user.getRoles().includes("ROLE_CLIENT")) {
 			if (
-				(req.params.name !== 'admin') ||
-				(!!Model.getAttributes()['client'] && `${model?.client}` === `${req.user.id}`)
+				req.params.name !== "admin" ||
+				(!!Model.getAttributes()["client"] &&
+					`${model?.client}` === `${req.user.id}`)
 			) {
 				res.json(model);
 			} else {
@@ -71,7 +95,7 @@ exports.show = async (req, res, next) => {
 				});
 			}
 		} else {
-			res.json(model)
+			res.json(model);
 		}
 	} catch (error) {
 		if (error instanceof TypeError) {
@@ -94,9 +118,9 @@ exports.new = async (req, res, next) => {
 			options.$dependencies = req.body.$dependencies;
 			data = req.body[req.params.name];
 		}
-		let model = {}
-		if (req.user.getRoles().includes('ROLE_CLIENT')) {
-			if (!!Model.getAttributes()['client']) {
+		let model = {};
+		if (req.user.getRoles().includes("ROLE_CLIENT")) {
+			if (!!Model.getAttributes()["client"]) {
 				data.client = req.user.id;
 				model = await Model.create(data, options);
 				res.json({
@@ -143,8 +167,11 @@ exports.edit = async (req, res, next) => {
 		if (!data?.motDePasse) {
 			delete data.motDePasse;
 		}
-		if (req.user.getRoles().includes('ROLE_CLIENT')) {
-			if (!!Model.getAttributes()['client'] && `${model?.client}` === `${req.user.id}`) {
+		if (req.user.getRoles().includes("ROLE_CLIENT")) {
+			if (
+				!!Model.getAttributes()["client"] &&
+				`${model?.client}` === `${req.user.id}`
+			) {
 				await model.update(data, options);
 				res.json({
 					status: "success",
@@ -181,8 +208,11 @@ exports.delete = async (req, res, next) => {
 	try {
 		const Model = db[snakeToCamel(req.params.name)];
 		const model = await Model.findByPk(req.params.id);
-		if (req.user.getRoles().includes('ROLE_CLIENT')) {
-			if (!!Model.getAttributes()['client'] && `${model?.client}` === `${req.user.id}`) {
+		if (req.user.getRoles().includes("ROLE_CLIENT")) {
+			if (
+				!!Model.getAttributes()["client"] &&
+				`${model?.client}` === `${req.user.id}`
+			) {
 				await model.destroy();
 				res.json({
 					status: "success",
@@ -214,4 +244,3 @@ exports.delete = async (req, res, next) => {
 		}
 	}
 };
-

@@ -79,13 +79,19 @@ exports.userProvider = async (req, res, next) => {
 
 exports.accessControlChecker = (req, res, next) => {
 	const security = config.security;
-	const uri = req.originalUrl;
+	const uri = req.originalUrl.split("?")[0];
 	const accessControls = security.access_control;
 	let isGranted = true;
+	let found = false;
 	for (const accessControl of accessControls) {
 		let path = accessControl.path.trim();
 		if (path.startsWith("^")) {
-			if (uri.startsWith(path.substring(1))) {
+			if (
+				`${uri}${path.endsWith("/") ? "/" : ""}`.startsWith(
+					path.substring(1)
+				)
+			) {
+				found = true;
 				const isPublic = accessControl.roles.includes("PUBLIC_ACCESS");
 				const isFullAuth = accessControl.roles.includes(
 					"IS_FULLY_AUTHENTICATED"
@@ -130,7 +136,7 @@ exports.accessControlChecker = (req, res, next) => {
 			}
 		}
 	}
-	if (isGranted) {
+	if (found && isGranted) {
 		next();
 	}
 };

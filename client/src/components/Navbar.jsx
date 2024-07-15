@@ -1,13 +1,13 @@
 import { NavLink } from "react-router-dom";
-import {useContext} from "react";
-import {RequestContext} from "../hooks/useRequest.js";
+import { useContext } from "react";
+import { RequestContext } from "../hooks/useRequest.js";
 
 export default function Navbar() {
 	const request = useContext(RequestContext);
 	const handleClick = (event) => {
 		event.preventDefault();
-		sessionStorage.removeItem('accessToken');
-		window.location = '/';
+		sessionStorage.removeItem("accessToken");
+		window.location = "/";
 	};
 	return (
 		<>
@@ -26,31 +26,45 @@ export default function Navbar() {
 						</a>
 					</li>
 					<li className="nav-item d-none d-sm-inline-block">
-						<NavLink to="/" className="nav-link">
-							Home
+						<NavLink
+							to={`/${request.getDomain().getName()}`}
+							className="nav-link"
+						>
+							Accueil
 						</NavLink>
 					</li>
-					{/* <li className="nav-item d-none d-sm-inline-block">
-						<a href="#" className="nav-link">
-							Contact
-						</a>
-					</li> */}
+					{request.getDomain().getName() === "profile" &&
+						request
+							.getUser()
+							.getRoles()
+							.includes("ROLE_CLIENT") && (
+							<li className="nav-item d-none d-sm-inline-block">
+								<NavLink
+									reloadDocument
+									to="/"
+									className="nav-link"
+								>
+									Magasin
+								</NavLink>
+							</li>
+						)}
 				</ul>
 
 				{/* <!-- Right navbar links --> */}
 				<ul className="navbar-nav ml-auto">
 					{/* <!-- Navbar Search --> */}
-					{!request.getUser().isAuthenticated() ? null :
-					(<li className="nav-item">
-						<a
-							className="nav-link"
-							href="#"
-							role="button"
-							onClick={handleClick}
-						>
-							Se déconnecter
-						</a>
-					</li>)}
+					{!request.getUser().isAuthenticated() ? null : (
+						<li className="nav-item">
+							<a
+								className="nav-link"
+								href="#"
+								role="button"
+								onClick={handleClick}
+							>
+								Se déconnecter
+							</a>
+						</li>
+					)}
 
 					<li className="nav-item">
 						<a

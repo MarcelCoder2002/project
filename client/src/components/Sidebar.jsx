@@ -1,6 +1,6 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
-import {RequestContext} from "../hooks/useRequest.js";
+import { RequestContext } from "../hooks/useRequest.js";
 import Table from "../utils/config/Table.js";
 
 export default function Sidebar() {
@@ -13,7 +13,10 @@ export default function Sidebar() {
 			{/*<!-- Main Sidebar Container -->*/}
 			<aside className="main-sidebar sidebar-dark-primary elevation-4">
 				{/*<!-- Brand Logo -->*/}
-				<a href={`/${request.getDomain().getName()}`} className="brand-link">
+				<a
+					href={`/${request.getDomain().getName()}`}
+					className="brand-link"
+				>
 					<img
 						src="/dist/img/logo.png"
 						alt="logo"
@@ -38,6 +41,7 @@ export default function Sidebar() {
 						</div>
 						<div className="info">
 							<Link
+								reloadDocument
 								to={
 									request.getUser().isAuthenticated()
 										? "/profile"
@@ -74,7 +78,9 @@ export default function Sidebar() {
 
 					{/*<!-- Sidebar Menu -->*/}
 					<nav className="mt-2">
-						{!request.getUser().hasMenu() ? null : (
+						{!request
+							.getUser()
+							.hasMenuForDomain(request.getDomain()) ? null : (
 							<ul
 								className="nav nav-pills nav-sidebar flex-column"
 								data-widget="treeview"
@@ -87,7 +93,10 @@ export default function Sidebar() {
 									.getUser()
 									.getMenuForDomain(request.getDomain())
 									.map((menu, key) => (
-										<li key={key} className="nav-item menu-open">
+										<li
+											key={key}
+											className="nav-item menu-open"
+										>
 											<NavLink
 												reloadDocument={false}
 												to={`${basename}/${menu.menu.getName()}`}
@@ -98,7 +107,9 @@ export default function Sidebar() {
 												></i>
 												<p>
 													{menu.menu.getTitle()}
-													{!menu.menu.hasSubMenu() ? null : (<i className="fas fa-angle-left right"></i>)}
+													{!menu.menu.hasSubMenu() ? null : (
+														<i className="fas fa-angle-left right"></i>
+													)}
 												</p>
 											</NavLink>
 											{!menu.menu.hasSubMenu() ? null : (
@@ -110,9 +121,9 @@ export default function Sidebar() {
 																className="nav-item"
 															>
 																<NavLink
-																	reloadDocument={
-																		Table.isTable(subMenu.getName())
-																	}
+																	reloadDocument={Table.isTable(
+																		subMenu.getName()
+																	)}
 																	to={`${basename}/${menu.menu.getName()}/${subMenu.getName()}`}
 																	className="nav-link"
 																>

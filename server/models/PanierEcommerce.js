@@ -1,7 +1,13 @@
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
-	class PanierEcommerce extends Model {}
+	class PanierEcommerce extends Model {
+		async getProduit(options = {}) {
+			return await this.sequelize
+				.model("Produit")
+				.findByPk(this.produit, options);
+		}
+	}
 
 	PanierEcommerce.init(
 		{
@@ -10,23 +16,23 @@ module.exports = (sequelize) => {
 				allowNull: false,
 				defaultValue: 1,
 			},
-            produit: {
+			produit: {
 				field: "id_produit",
 				type: DataTypes.INTEGER,
 				references: {
 					model: "Produit",
 					key: "id",
-                },
-                allowNull: false,
-                onDelete: "CASCADE",
-                onUpdate: "CASCADE",
-            },
-            client: {
-                field: "id_client",
-                type: DataTypes.INTEGER,
-                references: {
-                    model: "Client",
-                    key: "id",
+				},
+				allowNull: false,
+				onDelete: "CASCADE",
+				onUpdate: "CASCADE",
+			},
+			client: {
+				field: "id_client",
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Client",
+					key: "id",
 				},
 				allowNull: false,
 				onDelete: "CASCADE",
@@ -43,13 +49,14 @@ module.exports = (sequelize) => {
 				beforeCreate: async (detail, options) => {
 					const existing = await PanierEcommerce.findOne({
 						where: {
-                            produit: detail.produit,
-                            client: detail.client,
+							produit: detail.produit,
+							client: detail.client,
 						},
 					});
-					if (existing !== null) {
+					if (existing) {
 						existing.quantite += detail.quantite;
-						detail.destroy();
+						await existing.save();
+						throw new Error("This username is not allowed.");
 					}
 				},
 			},

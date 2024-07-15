@@ -9,7 +9,7 @@ class Domain {
 
 	constructor(name) {
 		this._name = name;
-		this._data = config.domains[name];
+		this._data = config.domains[name] ?? {};
 	}
 
 	getName() {

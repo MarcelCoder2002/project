@@ -1,8 +1,7 @@
-import {Route, Outlet, useRouteLoaderData, useNavigate} from "react-router-dom";
+import { Route, Outlet } from "react-router-dom";
 import Table, { Router as TableRouter } from "./table";
 import Content from "../../../components/Content";
 import Header from "../../../components/Header";
-import {useEffect} from "react";
 
 export function Router() {
 	const links = {
@@ -27,18 +26,6 @@ export function Router() {
 }
 
 function Management() {
-	const request = useRouteLoaderData("index");
-	const navigate = useNavigate();
-
-	useEffect(() => {
-		if (
-			!request.getUser().isAuthenticated() ||
-			!request.getUser().getRoles().includes("ROLE_ADMIN")
-		) {
-			navigate("/admin/login");
-		}
-	}, []);
-
 	return (
 		<>
 			<Outlet />

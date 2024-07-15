@@ -1,32 +1,23 @@
-import { createElement, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useUser from "./useUser";
+import { RequestContext } from "./useRequest";
+import { containsAll } from "../utils/array";
 
-export default function useAuthenticatedUser(
-	userExtraParams = "",
-	loadingPage = null
-) {
+export default function useAuthenticatedUser(roles, to = "/") {
 	const navigate = useNavigate();
-	const { user, loading, error } = useUser(userExtraParams);
+	const request = useContext(RequestContext);
 
 	useEffect(() => {
-		if ((!loading && !user) || error) {
-			navigate("/admin/login");
+		if (
+			!request.getUser().isAuthenticated() ||
+			!containsAll(
+				Array.isArray(roles) ? roles : [roles],
+				request.getUser().getRoles()
+			)
+		) {
+			navigate(to);
 		}
-	}, [loading, user, navigate]);
+	}, [navigate]);
 
-	if (loading) {
-		return {
-			loadingPage: loadingPage
-				? loadingPage()
-				: createElement("p", {
-						children: "Loading...",
-				  }),
-			user: user,
-		};
-	}
-	return {
-		loadingPage: null,
-		user: user,
-	};
+	return request;
 }

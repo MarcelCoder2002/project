@@ -1,11 +1,11 @@
 import axios from "axios";
-import {Form, Link, redirect, useNavigate} from "react-router-dom";
-import {useEffect} from "react";
+import { Form, Link, redirect, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-export const action = async ({request}) => {
+export const action = async ({ request }) => {
 	let path = window.location.pathname;
 	if (path !== "/") {
-		path = '/' + path.split("/")[1] ;
+		path = "/" + path.split("/")[1];
 	}
 
 	const data = {};
@@ -14,25 +14,23 @@ export const action = async ({request}) => {
 	}
 
 	try {
-		const response = await axios.post(`http://localhost:8000${path}/login`, data);
+		const response = await axios.post(
+			`http://localhost:8000${path}/login`,
+			data
+		);
 		if (response.data.error) {
 			alert(response.data.error);
 		} else {
-			sessionStorage.setItem(
-				"accessToken",
-				response.data.accessToken
-			);
+			sessionStorage.setItem("accessToken", response.data.accessToken);
 			return redirect("../");
 		}
 	} catch (error) {
 		alert("Login failed");
 	}
 	return redirect("");
-}
+};
 
 function Login({ action, title }) {
-	document.body.className = "hold-transition login-page";
-
 	return (
 		<div className="login-box">
 			<div className="login-logo">

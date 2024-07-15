@@ -5,9 +5,15 @@ import { snakeToCapitalCase } from "../../../../utils/format";
 import { get } from "../../../../utils/requests";
 
 export const loader = async ({ params }) => {
-	return (
-		await get(`http://localhost:8000/api/table/${params.name}/${params.id}`)
-	).data;
+	try {
+		return (
+			await get(
+				`http://localhost:8000/api/table/${params.name}/${params.id}`
+			)
+		).data;
+	} catch (error) {
+		return redirect("/admin/login");
+	}
 };
 
 export default function Show({ links }) {

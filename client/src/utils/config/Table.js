@@ -120,6 +120,17 @@ class Table {
 		return this.getDependencies().length > 0;
 	}
 
+	hasDependencyFormForUserAndAction(user, action) {
+		if (this.hasDependency()) {
+			for (const [name, dependency] of this.getDependencyObjects()) {
+				if (dependency.isFormVisibleForUserAndAction(user, action)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	getExternalField(name) {
 		return this.getExternalFieldObjects().get(name) ?? null;
 	}
@@ -159,10 +170,7 @@ class Table {
 	}
 
 	getAction(name) {
-		return (
-			this.getActionObjects().get(name) ??
-			null
-		);
+		return this.getActionObjects().get(name) ?? null;
 	}
 
 	getActions() {
@@ -192,6 +200,25 @@ class Table {
 			}
 		}
 		return actions;
+	}
+
+	getVisibleFieldsInFormForUserAndAction(user, action) {
+		const fields = [];
+		for (const [name, field] of this.getFieldObjects()) {
+			if (field.isVisibleInFormForUserAndAction(user, action)) {
+				fields.push(field);
+			}
+		}
+		return fields;
+	}
+
+	isFormVisibleForUserAndAction(user, action) {
+		for (const [name, field] of this.getFieldObjects()) {
+			if (field.isVisibleInFormForUserAndAction(user, action)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static isTable(name) {
