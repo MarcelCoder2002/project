@@ -121,6 +121,9 @@
 			},
 			"dependencies": {
 				"promotion_produit": { "unique": true }
+			},
+			"config": {
+				"columnDefs": [{ "type": "currency", "targets": 0 }]
 			}
 		},
 		"regle": {
@@ -244,12 +247,8 @@
 				"new": {
 					"roles": ["ROLE_CLIENT"]
 				},
-				"show": {},
 				"edit": {
 					"roles": ["ROLE_ADMIN"]
-				},
-				"delete": {
-					"roles": ["ROLE_CLIENT"]
 				}
 			}
 		},
@@ -441,11 +440,24 @@
 				}
 			},
 			"actions": {
-				"show": {},
 				"edit": {
 					"roles": ["ROLE_ADMIN"]
 				}
 			}
+		},
+		"achat": {
+			"menu": false,
+			"id": "code",
+			"fields": {
+				"code": {}
+			}
+		},
+		"detail": {
+			"menu": false,
+			"fields": {
+				"id": {}
+			},
+			"actions": {}
 		}
 	},
 	"domains": {
@@ -472,13 +484,16 @@
 				"produit": {
 					"icon": "far fa-star"
 				},
-				"rayon": {
-					"icon": "far fa-gift"
-				},
+				"rayon": {},
 				"regle": {},
 				"reclamation": {},
 				"cheque_cadeau": {}
 			}
+		},
+		"checkout": {
+			"domains": ["admin"],
+			"roles": ["ROLE_ADMIN"],
+			"title": "Caisse"
 		},
 		"purchases": {
 			"title": "Achats",

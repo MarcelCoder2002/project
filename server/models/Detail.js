@@ -78,20 +78,20 @@ module.exports = (sequelize) => {
 						).getRegle();
 
 						// Calculs
-						const total_detail =
-							produit.prix *
-							detail.quantite *
+						const total_detail = produit.prix * detail.quantite;
+						const total_points =
+							total_detail *
 							(regle !== null && regle.isValid()
 								? regle.multiplicite
 								: 1);
 						const real_total_points =
 							carteFidelite.point +
 							carteFidelite.reste +
-							total_detail;
+							total_points;
 
 						// Mise a jour des points et du prix du detail
 						detail.total = total_detail;
-						detail.point = parseInt(total_detail.toString());
+						detail.point = parseInt(total_points.toString());
 
 						// Mise a jour du total de l'achat
 						achat.total += detail.total;
@@ -108,9 +108,12 @@ module.exports = (sequelize) => {
 						// Ajout du cheque cadeau
 						const plafond = 10_000;
 						if (carteFidelite.point >= plafond) {
-							carteFidelite.point -= plafond;
+							const n = Math.floor(carteFidelite.point / plafond);
+							carteFidelite.point = carteFidelite.point % plafond;
 							await carteFidelite.save();
-							await client.createChequeCadeau({});
+							for (let i = 0; i < n; i++) {
+								await client.createChequeCadeau({});
+							}
 						}
 					} else {
 						// Avec promotion

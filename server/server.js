@@ -56,5 +56,47 @@ db.sequelize.sync().then(async () => {
 	// 	motDePasse: "admin",
 	// 	adresse: "Agadir",
 	// });
+	// const rayon1 = await db.Rayon.create({
+	// 	nom: "Cereales",
+	// });
+	// rayon1.createProduit({
+	// 	nom: "Riz 1kg",
+	// 	prix: 17.95,
+	// 	ean1: "4384038309498",
+	// });
+	// rayon1.createProduit({
+	// 	nom: "Pâtes 500g",
+	// 	prix: 14.95,
+	// });
+	// const rayon2 = await db.Rayon.create({
+	// 	nom: "Jeux",
+	// });
+	// rayon2.createProduit({
+	// 	nom: "PS4",
+	// 	prix: 2999.99,
+	// 	ean1: "1384038309497",
+	// });
+	// rayon2.createProduit({
+	// 	nom: "Fifa 23",
+	// 	prix: 700.99,
+	// });
+	// const rayon3 = await db.Rayon.create({
+	// 	nom: "Laiterie",
+	// });
+	// rayon3.createProduit({
+	// 	nom: "Raib du bled",
+	// 	prix: 10.99,
+	// 	ean1: "0384038309497",
+	// });
+
+	// rayon3.createProduit({
+	// 	nom: "Perly",
+	// 	prix: 3,
+	// });
+	// rayon3.createProduit({
+	// 	nom: "Danone",
+	// 	prix: 2.5,
+	// 	ean1: "0388036309497",
+	// });
 	server.listen(port);
 });

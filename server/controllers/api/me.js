@@ -1,6 +1,15 @@
 const db = require("../../models");
 const { snakeToCamel } = require("../../src/utils");
 
+exports.checkout = async (req, res, next) => {
+	if (req.user.getRoles().includes("ROLE_CLIENT")) {
+		await req.user.validatePanierEcommerce();
+		res.json({ status: "success" });
+	} else {
+		res.json({});
+	}
+};
+
 exports.getCart = async (req, res, next) => {
 	if (req.user.getRoles().includes("ROLE_CLIENT")) {
 		res.json(

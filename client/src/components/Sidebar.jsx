@@ -44,7 +44,7 @@ export default function Sidebar() {
 								reloadDocument
 								to={
 									request.getUser().isAuthenticated()
-										? "/profile"
+										? `/${request.getDomain().getName()}`
 										: "/profile/login"
 								}
 								className="d-block"

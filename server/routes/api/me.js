@@ -3,6 +3,7 @@ const router = express.Router();
 
 const controllers = require("../../controllers/api/me");
 
+router.post("/checkout", controllers.checkout);
 router.get("/cart", controllers.getCart);
 router.get("/purchases", controllers.getPurchases);
 router.get("/", controllers.index);

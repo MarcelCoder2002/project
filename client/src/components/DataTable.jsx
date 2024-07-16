@@ -14,17 +14,23 @@ import "../../plugins/pdfmake/pdfmake.min.js";
 import "../../plugins/datatables-buttons/js/buttons.html5.min.js";
 import "../../plugins/datatables-buttons/js/buttons.print.min.js";
 import "../../plugins/datatables-buttons/js/buttons.colVis.min.js";
+import "moment/moment.js";
+// import "datatables.net-plugins/sorting/datetime-moment.js";
+import "datatables.net-plugins/sorting/currency.js";
+// import "datatables.net-plugins/filtering/row-based/range_dates.js";
 
 export default function DataTable({ actions, tableName, rows = [] }) {
 	const { name } = useParams();
 	const table = new Table(tableName ?? name);
 	let fields = Array.from(table.getFieldObjects().values());
+	console.log(table.getConfig());
 
 	useEffect(() => {
+		// $.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss");
 		const t = $("#datatable").DataTable({
 			layout: {
 				topStart: {
-					buttons: ["copy", "csv", "excel", "print"],
+					buttons: ["copy"],
 				},
 			},
 			destroy: true,
@@ -33,6 +39,7 @@ export default function DataTable({ actions, tableName, rows = [] }) {
 			autoWidth: false,
 			ordering: true,
 			paging: true,
+			...table.getConfig(),
 		});
 
 		return function () {

@@ -1,4 +1,4 @@
-const { DataTypes, Model } = require("sequelize");
+const { DataTypes, Model, Op } = require("sequelize");
 
 module.exports = (sequelize) => {
 	class ChequeCadeau extends Model {
@@ -8,6 +8,10 @@ module.exports = (sequelize) => {
 			CONSOMME: "Consommé",
 			EXPIRE: "Expiré",
 		};
+
+		isValid() {
+			return !!this.dateExpiration && this.dateExpiration > new Date();
+		}
 	}
 
 	ChequeCadeau.init(
@@ -37,18 +41,7 @@ module.exports = (sequelize) => {
 			dateExpiration: {
 				field: "date_expiration",
 				type: DataTypes.DATE,
-				allowNull: false,
-				defaultValue: () => {
-					let a = 1,
-						b = new Date();
-					let d = new Date(b || new Date()),
-						c = d.getMonth();
-					d.setFullYear(d.getFullYear() + a);
-					if (d.getMonth() != c) {
-						d = new Date(d.setDate(d.getDate() - 1));
-					}
-					return d;
-				},
+				allowNull: true,
 			},
 			dateCreation: {
 				field: "date_creation",
@@ -86,6 +79,12 @@ module.exports = (sequelize) => {
 						.toISOString()
 						.replace(/T/, " ")
 						.replace(/\..+/g, "");
+				},
+				beforeFind: async (options) => {
+					await ChequeCadeau.update(
+						{ statut: ChequeCadeau.STATUT.EXPIRE },
+						{ where: { dateExpiration: { [Op.lt]: new Date() } } }
+					);
 				},
 			},
 		}

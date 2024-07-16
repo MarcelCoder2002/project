@@ -64,7 +64,7 @@
 			},
 			{
 				"path": "^/api/me/",
-				"roles": ["ROLE_CLIENT"]
+				"roles": ["IS_FULLY_AUTHENTICATED"]
 			},
 			{
 				"path": "^/api/table/produit/new/",

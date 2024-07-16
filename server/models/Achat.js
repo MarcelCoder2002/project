@@ -13,6 +13,14 @@ module.exports = (sequelize) => {
 		async getClient(options = {}) {
 			return await Client.findByPk(this.client, options);
 		}
+
+		async getDetail(options = {}) {
+			options.where = {
+				...(options?.where ?? {}),
+				achat: this.code,
+			};
+			return await this.sequelize.model("Detail").findAll(options);
+		}
 	}
 
 	Achat.init(

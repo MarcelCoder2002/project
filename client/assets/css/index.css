@@ -1,0 +1,3 @@
+.dt-hasChild.shown + tr > td {
+	background-color: #6998a7;
+}

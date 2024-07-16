@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useRouteLoaderData } from "react-router-dom";
+import { Outlet, useRouteLoaderData } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -11,7 +11,6 @@ import "../../dist/js/adminlte.min.js";
 import { RequestContext } from "../hooks/useRequest.js";
 
 export default function Home() {
-	// const location = useLocation();
 	const request = useRouteLoaderData("index");
 	const isLoginPage = location.pathname.endsWith("/login");
 

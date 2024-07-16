@@ -28,8 +28,6 @@ const nothing = (event) => {
 	event.preventDefault();
 };
 
-const checkout = async () => {};
-
 function Cart() {
 	const links = {
 		Profile: "/profile",
@@ -38,6 +36,17 @@ function Cart() {
 	const navigate = useNavigate();
 	let [data, setData] = useState([]);
 	const [total, setTotal] = useState(0);
+
+	const checkout = async () => {
+		if (data.length > 0) {
+			if (confirm("Êtes-vous sûr ?")) {
+				await post(`http://localhost:8000/api/me/checkout`);
+				window.location.reload();
+			}
+		} else {
+			alert("Ajoutez des produits !");
+		}
+	};
 
 	const deleteCart = async (event) => {
 		try {
@@ -48,7 +57,7 @@ function Cart() {
 				);
 				if (response.data.status !== "error") {
 					const temp = parseFloat(
-						tr.children[4].children[0].innerText
+						tr.children[3].children[0].innerText
 					);
 					setTotal(Math.abs(total - temp));
 					tr.remove();
@@ -66,7 +75,7 @@ function Cart() {
 				.innerText
 		);
 		const element =
-			event.target.parentElement.parentElement.children[4].children[0];
+			event.target.parentElement.parentElement.children[3].children[0];
 		const temp = parseFloat(element.innerText);
 		const newValue = parseFloat(
 			Number.isInteger(quantity) ? quantity * price : 0
@@ -131,7 +140,6 @@ function Cart() {
 														<th>Produit</th>
 														<th>Prix</th>
 														<th>Quantité</th>
-														<th>Promotion</th>
 														<th>Total</th>
 													</tr>
 												</thead>
@@ -185,10 +193,6 @@ function Cart() {
 																	type="number"
 																	required
 																/>
-															</td>
-															<td>
-																{value.promotion ||
-																	"Aucune"}
 															</td>
 															<td
 																style={{

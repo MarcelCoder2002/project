@@ -184,7 +184,8 @@ class Table {
 				this._actions.set(name, new Action(this, name));
 			}
 			if (this._actions.size === 0) {
-				for (const name of ["new", "show", "edit", "delete"]) {
+				for (const name of ["new", "edit", "delete"]) {
+					// "show"
 					this._actions.set(name, new Action(this, name));
 				}
 			}
@@ -223,6 +224,10 @@ class Table {
 
 	static isTable(name) {
 		return this.getTable(name) !== null;
+	}
+
+	getConfig() {
+		return this._data?.config ?? {};
 	}
 }
 

@@ -8,6 +8,7 @@ import useAuthenticatedUser from "../../hooks/useAuthenticatedUser.js";
 import Purchases, { loader as purchasesLoader } from "./purchases.jsx";
 
 export function Router() {
+	const links = { Profile: "/profile" };
 	return (
 		<>
 			<Route
@@ -23,7 +24,7 @@ export function Router() {
 			<Route index element={<Home />} loader={homeLoader}></Route>
 			<Route
 				path="purchases"
-				element={<Purchases />}
+				element={<Purchases links={links} />}
 				loader={purchasesLoader}
 			></Route>
 			<Route path="cart" element={<Cart />} loader={cartLoader}></Route>

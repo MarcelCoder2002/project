@@ -15,9 +15,24 @@ module.exports = (sequelize) => {
 			return await this.sequelize.model("Achat").findAll(options);
 		}
 
+		async getChequeCadeau(options = {}) {
+			options.where = {
+				...(options?.where ?? {}),
+				client: this.id,
+			};
+			return await this.sequelize.model("ChequeCadeau").findAll(options);
+		}
+
 		async createAchat(data = {}, options = {}) {
 			data.client = this.id;
 			return await this.sequelize.model("Achat").create(data, options);
+		}
+
+		async createChequeCadeau(data = {}, options = {}) {
+			data.client = this.id;
+			return await this.sequelize
+				.model("ChequeCadeau")
+				.create(data, options);
 		}
 
 		async createPanierEcommerce(data = {}, options = {}) {
@@ -128,6 +143,12 @@ module.exports = (sequelize) => {
 				set(value) {
 					this.setDataValue("motDePasse", bcrypt.hashSync(value, 10));
 				},
+			},
+			dateCreation: {
+				field: "date_creation",
+				type: DataTypes.DATE,
+				allowNull: false,
+				defaultValue: DataTypes.NOW,
 			},
 		},
 		{

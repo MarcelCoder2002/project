@@ -49,11 +49,16 @@ export function formatDatetime(date) {
 }
 
 export function formatPrice(price) {
-	return `${price} MAD`;
+	return Intl.NumberFormat("fr-MA", {
+		style: "currency",
+		currency: "MAD",
+	}).format(price);
 }
 
 export function formatPercentage(percentage) {
-	return `${percentage} %`;
+	return Intl.NumberFormat("fr-MA", {
+		style: "percent",
+	}).format(percentage);
 }
 
 export function formatOption(template, values) {
