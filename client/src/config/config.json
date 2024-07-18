@@ -476,19 +476,23 @@
 			"title": "Gestion",
 			"subMenus": {
 				"admin": {
-					"icon": "far fa-user"
+					"icon": "far fa-none"
 				},
 				"client": {
-					"icon": "far fa-user"
+					"icon": "far fa-none"
 				},
 				"produit": {
-					"icon": "far fa-star"
+					"icon": "far fa-none"
 				},
-				"rayon": {},
-				"regle": {},
-				"reclamation": {},
-				"cheque_cadeau": {}
+				"rayon": { "icon": "far fa-none" },
+				"regle": { "icon": "far fa-none" },
+				"reclamation": { "icon": "far fa-none" }
 			}
+		},
+		"gifts": {
+			"title": "Suivi des chèques cadeau",
+			"domains": ["admin"],
+			"roles": ["ROLE_ADMIN"]
 		},
 		"checkout": {
 			"domains": ["admin"],

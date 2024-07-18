@@ -1,7 +1,13 @@
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
-	class CarteFidelite extends Model {}
+	class CarteFidelite extends Model {
+		async getClient(options = {}) {
+			return await this.sequelize
+				.model("Client")
+				.findByPk(this.client, options);
+		}
+	}
 
 	CarteFidelite.init(
 		{
@@ -14,6 +20,7 @@ module.exports = (sequelize) => {
 			code: {
 				type: DataTypes.STRING(13),
 				allowNull: true,
+				unique: true,
 			},
 			point: {
 				type: DataTypes.INTEGER,

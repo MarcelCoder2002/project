@@ -4,7 +4,14 @@ const config = require("../config/config.json");
 const { verify, JsonWebTokenError } = require("jsonwebtoken");
 const { findAuthenticatorFiles, snakeToCamel } = require("../src/utils");
 const db = require("../models");
-const User = require("../models/User");
+const emailjs = require("@emailjs/browser");
+
+exports.emailjsProvider = (req, res, next) => {
+	emailjs.init({
+		publicKey: config.env.email.EMAIL_JS_KEY,
+	});
+	next();
+};
 
 exports.firewallProvider = (req, res, next) => {
 	const security = config.security;
@@ -45,7 +52,10 @@ exports.userProvider = async (req, res, next) => {
 	req.user = null;
 	if (accessToken) {
 		try {
-			const validToken = verify(accessToken, config.env.JWT_SECRET_KEY);
+			const validToken = verify(
+				accessToken,
+				config.env.jwt.JWT_SECRET_KEY
+			);
 			if (validToken) {
 				if (req.firewall && req.firewall.provider) {
 					const Provider = db[req.firewall.provider];

@@ -10,6 +10,11 @@ import Header from "../../components/Header.jsx";
 import Box from "../../components/statistics/Box.jsx";
 import Card from "../../components/Card.jsx";
 import { get } from "../../utils/requests.js";
+import Gifts, {
+	Router as GiftsRouter,
+	loader as giftsLoader,
+} from "./gifts/index.jsx";
+import Checkout from "./checkout.jsx";
 
 export async function loader({}) {
 	try {
@@ -19,12 +24,16 @@ export async function loader({}) {
 	}
 }
 
-export function Router() {
+export function Router(links) {
 	return (
 		<>
 			<Route path="management" element={<Management />}>
-				{ManagementRouter()}
+				{ManagementRouter(links)}
 			</Route>
+			<Route path="gifts" element={<Gifts />} loader={giftsLoader}>
+				{GiftsRouter(links)}
+			</Route>
+			<Route path="checkout" element={<Checkout links={links} />}></Route>
 		</>
 	);
 }

@@ -1,6 +1,46 @@
 const db = require("../../models");
 const { snakeToCamel } = require("../../src/utils");
 
+exports.getGifts = async (req, res, next) => {
+	res.json(
+		await db.Client.findAll({
+			includes: { cheque_cadeau: {} },
+		})
+	);
+};
+
+exports.checkout = async (req, res, next) => {
+	try {
+		carte_fidelite = await db.CarteFidelite.findOne({
+			where: { code: req.body.carte_fidelite },
+		});
+		if (carte_fidelite) {
+			await carte_fidelite.getClient().validatePanierEcommerce();
+			res.json({ status: "success" });
+		} else {
+			res.json({ status: "error", message: "Carte fidélité invalide !" });
+		}
+	} catch (error) {
+		res.status(500).json({ status: "error", message: error.toString() });
+	}
+};
+
+exports.checkout = async (req, res, next) => {
+	try {
+		carte_fidelite = await db.CarteFidelite.findOne({
+			where: { code: req.body.carte_fidelite },
+		});
+		if (carte_fidelite) {
+			await carte_fidelite.getClient().validatePanierEcommerce();
+			res.json({ status: "success" });
+		} else {
+			res.json({ status: "error", message: "Carte fidélité invalide !" });
+		}
+	} catch (error) {
+		res.status(500).json({ status: "error", message: error.toString() });
+	}
+};
+
 exports.index = async (req, res, next) => {
 	try {
 		const Model = db[snakeToCamel(req.params.name)];

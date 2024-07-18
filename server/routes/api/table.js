@@ -3,6 +3,9 @@ const router = express.Router();
 
 const controllers = require("../../controllers/api/table");
 
+router.post("/checkout", controllers.checkout);
+router.get("/gifts", controllers.getGifts);
+
 router.get("/:name", controllers.index);
 router.post("/:name", controllers.index);
 router.get("/:name/:id", controllers.show);

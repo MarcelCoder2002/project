@@ -3,6 +3,10 @@ const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
 	class Client extends Model {
+		getFullName() {
+			return this.nom + " " + this.prenom;
+		}
+
 		getRoles(options = {}) {
 			return ["ROLE_CLIENT"];
 		}

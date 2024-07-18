@@ -56,6 +56,9 @@ db.sequelize.sync().then(async () => {
 	// 	motDePasse: "admin",
 	// 	adresse: "Agadir",
 	// });
+
+	// const magasin = db.Magasin.create({ nom: "Aswak", adresse: "Casablanca" });
+
 	// const rayon1 = await db.Rayon.create({
 	// 	nom: "Cereales",
 	// });
@@ -68,6 +71,7 @@ db.sequelize.sync().then(async () => {
 	// 	nom: "Pâtes 500g",
 	// 	prix: 14.95,
 	// });
+
 	// const rayon2 = await db.Rayon.create({
 	// 	nom: "Jeux",
 	// });
@@ -80,6 +84,7 @@ db.sequelize.sync().then(async () => {
 	// 	nom: "Fifa 23",
 	// 	prix: 700.99,
 	// });
+
 	// const rayon3 = await db.Rayon.create({
 	// 	nom: "Laiterie",
 	// });
@@ -88,7 +93,6 @@ db.sequelize.sync().then(async () => {
 	// 	prix: 10.99,
 	// 	ean1: "0384038309497",
 	// });
-
 	// rayon3.createProduit({
 	// 	nom: "Perly",
 	// 	prix: 3,

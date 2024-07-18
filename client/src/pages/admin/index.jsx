@@ -4,6 +4,7 @@ import Login, { action as loginAction } from "../../components/Login";
 import useAuthenticatedUser from "../../hooks/useAuthenticatedUser";
 
 export function Router() {
+	const links = { Administration: "/admin" };
 	return (
 		<>
 			<Route
@@ -17,7 +18,7 @@ export function Router() {
 				}
 			/>
 			<Route index element={<Home />} loader={homeLoader}></Route>
-			{HomeRouter()}
+			{HomeRouter(links)}
 		</>
 	);
 }

@@ -3,10 +3,7 @@ import Table, { Router as TableRouter } from "./table";
 import Content from "../../../components/Content";
 import Header from "../../../components/Header";
 
-export function Router() {
-	const links = {
-		Administration: "/admin",
-	};
+export function Router(links) {
 	return (
 		<>
 			<Route

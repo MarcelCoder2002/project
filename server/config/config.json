@@ -21,7 +21,16 @@
 		"dialect": "mysql"
 	},
 	"env": {
-		"JWT_SECRET_KEY": "0fff8bf92ac3fb411c3ca89273d84fcb118e8fde1e0664a168ce56bd6f4461eb"
+		"jwt": {
+			"JWT_SECRET_KEY": "0fff8bf92ac3fb411c3ca89273d84fcb118e8fde1e0664a168ce56bd6f4461eb"
+		},
+		"email": {
+			"EMAIL_JS_KEY": "dTRbMKmVo-i0_9RUL",
+			"GMAIL_SERVICE_ID": "service_g5ux59t",
+			"templates": {
+				"GIFT_CARD_NOTIFICATION": "template_3wtadd3"
+			}
+		}
 	},
 	"security": {
 		"firewall": {

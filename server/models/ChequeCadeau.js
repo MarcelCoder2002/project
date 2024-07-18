@@ -12,6 +12,12 @@ module.exports = (sequelize) => {
 		isValid() {
 			return !!this.dateExpiration && this.dateExpiration > new Date();
 		}
+
+		async getClient(options = {}) {
+			return await this.sequelize
+				.model("Client")
+				.findByPk(this.client, options);
+		}
 	}
 
 	ChequeCadeau.init(

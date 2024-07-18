@@ -1,3 +1,4 @@
+const emailjs = require("@emailjs/browser");
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
@@ -114,6 +115,14 @@ module.exports = (sequelize) => {
 							for (let i = 0; i < n; i++) {
 								await client.createChequeCadeau({});
 							}
+							params = {
+								to_name: client.getFullName(),
+								message: `Vous avez reçu ${n} nouveau${
+									n === 1 ? " chèque" : "x chèques"
+								} cadeau ! Vous pourrez venir le${
+									n === 1 ? "" : "s"
+								} récupérer dans l'une de nos agences !`,
+							};
 						}
 					} else {
 						// Avec promotion

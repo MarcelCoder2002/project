@@ -2,11 +2,15 @@ const bcrypt = require("bcrypt");
 const { DataTypes, Model } = require("sequelize");
 
 module.exports = (sequelize) => {
-    class Admin extends Model {
-        getRoles() {
-            return ["ROLE_ADMIN"];
-        }
-    }
+	class Admin extends Model {
+		getRoles() {
+			return ["ROLE_ADMIN"];
+		}
+
+		getFullName() {
+			return this.nom + " " + this.prenom;
+		}
+	}
 
 	Admin.init(
 		{

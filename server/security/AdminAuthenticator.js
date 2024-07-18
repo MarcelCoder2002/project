@@ -20,7 +20,7 @@ module.exports = () => {
 								email: req.body.email,
 								type: "admin",
 							},
-							config.env.JWT_SECRET_KEY
+							config.env.jwt.JWT_SECRET_KEY
 						),
 					});
 				} else {
