@@ -46,6 +46,13 @@ module.exports = (sequelize) => {
 				.create(data, options);
 		}
 
+		async createNotification(data = {}, options = {}) {
+			data.client = this.id;
+			return await this.sequelize
+				.model("Notification")
+				.create(data, options);
+		}
+
 		async createCarteFidelite(data = {}, options = {}) {
 			data.client = this.id;
 			return await this.sequelize
@@ -70,10 +77,25 @@ module.exports = (sequelize) => {
 				.findAll(options);
 		}
 
-		async validatePanier() {
-			return (await this.validatePanierMagasin())
-				? true
-				: await this.validatePanierEcommerce();
+		async getNotification(options = {}) {
+			if (options.where) {
+				options.where.client = this.id;
+			}
+			return await this.sequelize.model("Notification").findAll(options);
+		}
+
+		async validatePanierMagasin(details, magasin) {
+			if (details) {
+				const achat = await this.createAchat({ magasin: magasin });
+				for (let detail of details) {
+					await achat.createDetail({
+						produit: detail.id,
+						quantite: detail.quantite,
+					});
+				}
+				return true;
+			}
+			return false;
 		}
 
 		async validatePanierEcommerce() {
@@ -90,24 +112,6 @@ module.exports = (sequelize) => {
 						quantite: detail.quantite,
 					});
 					await detail.destroy();
-				}
-				return true;
-			}
-			return false;
-		}
-
-		async validatePanierMagasin() {
-			let details = await this.sequelize.model("PanierMagasin").findAll({
-				where: { client: this.id },
-			});
-			if (details) {
-				const achat = await this.createAchat({});
-				for (let detail of details) {
-					achat.createDetail({
-						produit: detail.produit,
-						quantite: detail.quantite,
-					});
-					detail.destroy();
 				}
 				return true;
 			}

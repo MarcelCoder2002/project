@@ -15,7 +15,7 @@ import { RequestContext } from "../../hooks/useRequest.js";
 
 export const loader = async ({}) => {
 	const query = qs.stringify({
-		include: ["carte_fidelite", "cheque_cadeau"],
+		includes: ["carte_fidelite", "cheque_cadeau"],
 	});
 	try {
 		return (await get(`http://localhost:8000/api/me?${query}`)).data;

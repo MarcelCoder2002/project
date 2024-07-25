@@ -53,10 +53,16 @@ sequelize.addHook("afterFind", async (models, options) => {
 	for (const model of models) {
 		if (includes) {
 			model.dataValues.includes = {};
-			for (const [include, value] of Object.entries(includes)) {
-				model.dataValues.includes[include] = await model[
-					`get${snakeToCamel(include)}`
-				](value);
+			for (const include of includes) {
+				if (typeof include === "object") {
+					model.dataValues.includes[include.name] = await model[
+						`get${snakeToCamel(include.name)}`
+					](include.options ?? {});
+				} else {
+					model.dataValues.includes[include] = await model[
+						`get${snakeToCamel(include)}`
+					]();
+				}
 			}
 		}
 	}

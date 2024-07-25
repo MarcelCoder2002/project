@@ -1,5 +1,5 @@
-const emailjs = require("@emailjs/browser");
 const { DataTypes, Model } = require("sequelize");
+const { send } = require("../src/email");
 
 module.exports = (sequelize) => {
 	const Produit = require("./Produit")(sequelize);
@@ -115,14 +115,20 @@ module.exports = (sequelize) => {
 							for (let i = 0; i < n; i++) {
 								await client.createChequeCadeau({});
 							}
-							params = {
-								to_name: client.getFullName(),
-								message: `Vous avez reçu ${n} nouveau${
-									n === 1 ? " chèque" : "x chèques"
-								} cadeau ! Vous pourrez venir le${
-									n === 1 ? "" : "s"
-								} récupérer dans l'une de nos agences !`,
-							};
+							let text = `Vous avez reçu ${n} nouveau${
+								n === 1 ? " chèque cadeau" : "x chèques cadeaux"
+							} !`;
+							if (client.email) {
+								send({
+									from: "admin@gmail.com",
+									to: client.email,
+									subject: "Notification de chèque cadeau",
+									html: `<h1>Notification</h1><h2>Chèque cadeau</h2><p>${text} Vous pourrez venir le${
+										n === 1 ? "" : "s"
+									} récupérer dans l'une de nos agences !</p>`,
+								});
+							}
+							client.createNotification({ message: text });
 						}
 					} else {
 						// Avec promotion

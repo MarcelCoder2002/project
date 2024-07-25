@@ -76,6 +76,10 @@
 				"roles": ["IS_FULLY_AUTHENTICATED"]
 			},
 			{
+				"path": "^/api/table/notification/",
+				"roles": ["RESTRICTED"]
+			},
+			{
 				"path": "^/api/table/produit/new/",
 				"roles": ["ROLE_ADMIN"]
 			},

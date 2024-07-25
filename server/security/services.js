@@ -4,14 +4,6 @@ const config = require("../config/config.json");
 const { verify, JsonWebTokenError } = require("jsonwebtoken");
 const { findAuthenticatorFiles, snakeToCamel } = require("../src/utils");
 const db = require("../models");
-const emailjs = require("@emailjs/browser");
-
-exports.emailjsProvider = (req, res, next) => {
-	emailjs.init({
-		publicKey: config.env.email.EMAIL_JS_KEY,
-	});
-	next();
-};
 
 exports.firewallProvider = (req, res, next) => {
 	const security = config.security;

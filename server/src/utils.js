@@ -33,3 +33,16 @@ exports.snakeToCamel = (snakeCaseStr) => {
 		.replace(/(_\w)/g, (match) => match[1].toUpperCase());
 	return camelCaseStr.charAt(0).toUpperCase() + camelCaseStr.slice(1);
 };
+
+exports.remove = (array, item) => {
+	const index = array.indexOf(item);
+	if (index !== -1) {
+		array.splice(index, 1);
+	}
+};
+
+exports.removeByIndex = (array, index) => {
+	if (index !== -1) {
+		array.splice(index, 1);
+	}
+};

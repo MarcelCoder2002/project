@@ -5,6 +5,7 @@ const controllers = require("../../controllers/api/table");
 
 router.post("/checkout", controllers.checkout);
 router.get("/gifts", controllers.getGifts);
+router.get("/statistics", controllers.statistics);
 
 router.get("/:name", controllers.index);
 router.post("/:name", controllers.index);

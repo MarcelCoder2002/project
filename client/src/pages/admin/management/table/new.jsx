@@ -2,17 +2,13 @@ import { redirect, useLoaderData, useParams } from "react-router-dom";
 import Content from "../../../../components/Content";
 import Form from "../../../../components/form/Form";
 import Header from "../../../../components/Header";
-import {
-	formDataToJSON,
-	parseKeyFormData,
-	snakeToCapitalCase,
-} from "../../../../utils/format";
+import { formDataToJson, snakeToCapitalCase } from "../../../../utils/format";
 import { get, post } from "../../../../utils/requests";
 import Table from "../../../../utils/config/Table";
 
 export const action = async ({ request, params }) => {
 	let data = {};
-	const temp = parseKeyFormData(formDataToJSON(await request.formData()));
+	const temp = formDataToJson(await request.formData());
 	const list = Object.keys(temp);
 	if (list.length === 1) {
 		data = temp[params.name];

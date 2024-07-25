@@ -417,7 +417,8 @@
 					},
 					"form": {
 						"attributes": {
-							"type": "datetime-local"
+							"type": "datetime-local",
+							"required": true
 						}
 					}
 				},
@@ -458,6 +459,31 @@
 				"id": {}
 			},
 			"actions": {}
+		},
+		"notification": {
+			"menu": false,
+			"fields": {
+				"id": {
+					"table": { "visible": false },
+					"form": { "visible": false }
+				},
+				"message": {},
+				"dateCreation": {
+					"table": {
+						"formatter": "datetime"
+					},
+					"form": {
+						"attributes": {
+							"type": "datetime-local"
+						}
+					}
+				}
+			},
+			"actions": {
+				"delete": {
+					"roles": ["ROLE_CLIENT"]
+				}
+			}
 		}
 	},
 	"domains": {
@@ -474,6 +500,7 @@
 			"domains": ["admin"],
 			"roles": ["ROLE_ADMIN"],
 			"title": "Gestion",
+			"link": false,
 			"subMenus": {
 				"admin": {
 					"icon": "far fa-none"
@@ -490,14 +517,14 @@
 			}
 		},
 		"gifts": {
-			"title": "Suivi des chèques cadeau",
+			"title": "Suivi des chèques cadeaux",
 			"domains": ["admin"],
 			"roles": ["ROLE_ADMIN"]
 		},
 		"checkout": {
 			"domains": ["admin"],
 			"roles": ["ROLE_ADMIN"],
-			"title": "Caisse"
+			"title": "Caisse (test)"
 		},
 		"purchases": {
 			"title": "Achats",
@@ -505,7 +532,7 @@
 			"roles": ["ROLE_CLIENT"]
 		},
 		"cart": {
-			"title": "Panier",
+			"title": "Panier (test)",
 			"domains": ["profile"],
 			"roles": ["ROLE_CLIENT"]
 		},

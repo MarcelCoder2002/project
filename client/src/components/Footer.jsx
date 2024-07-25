@@ -6,11 +6,7 @@ export default function Footer() {
 				Anything you want
 			</div>
 			{/* Default to the left */}
-			<strong>
-				Copyright © 2014-2021{" "}
-				<a href="https://adminlte.io">AdminLTE.io</a>.
-			</strong>{" "}
-			All rights reserved.
+			<strong>Copyright © 2014-2021</strong> Tous droits réservés.
 		</footer>
 	);
 }

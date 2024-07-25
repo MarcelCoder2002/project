@@ -90,6 +90,10 @@ class Menu {
 		return this.getSubMenuObjects().size > 0;
 	}
 
+	isLink() {
+		return this._data?.link ?? true;
+	}
+
 	inDomain(domain) {
 		if (!domain instanceof Domain) {
 			domain = Domain.getDomain(domain);

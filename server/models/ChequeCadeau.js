@@ -10,7 +10,11 @@ module.exports = (sequelize) => {
 		};
 
 		isValid() {
-			return !!this.dateExpiration && this.dateExpiration > new Date();
+			return (
+				this.statut === ChequeCadeau.STATUT.RECUPERE &&
+				this.dateExpiration &&
+				this.dateExpiration >= new Date()
+			);
 		}
 
 		async getClient(options = {}) {
@@ -89,7 +93,17 @@ module.exports = (sequelize) => {
 				beforeFind: async (options) => {
 					await ChequeCadeau.update(
 						{ statut: ChequeCadeau.STATUT.EXPIRE },
-						{ where: { dateExpiration: { [Op.lt]: new Date() } } }
+						{
+							where: {
+								statut: {
+									[Op.in]: [
+										ChequeCadeau.STATUT.EN_ATTENTE,
+										ChequeCadeau.STATUT.RECUPERE,
+									],
+								},
+								dateExpiration: { [Op.lt]: new Date() },
+							},
+						}
 					);
 				},
 			},

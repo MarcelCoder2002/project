@@ -1,3 +1,5 @@
+import qs from "qs";
+
 export function snakeToCapitalCase(str) {
 	const words = str.split("_");
 	const firstWord =
@@ -31,6 +33,11 @@ export function formatDate(date) {
 				// hour12: false,
 				// timeZone: "UTC", // Assurez-vous que la timezone est correcte
 		  });
+}
+
+export function capitalize(string) {
+	if (!string) return string;
+	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
 export function formatDatetime(date) {
@@ -102,4 +109,16 @@ export function parseKeyFormData(data) {
 		}
 	}
 	return parsedObj;
+}
+
+export function formDataToQueryString(form) {
+	let s = "";
+	for (const [key, value] of form.entries()) {
+		s += `&${key}=${value}`;
+	}
+	return s;
+}
+
+export function formDataToJson(form) {
+	return qs.parse(formDataToQueryString(form));
 }

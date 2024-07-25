@@ -26,3 +26,12 @@ export function withoutDuplicates(liste) {
 export function last(list) {
 	return list[list.length - 1];
 }
+
+export function findOne(array, options) {
+	return array.filter((value) => {
+		for (const key of Object.keys(options)) {
+			if (value[key] !== options[key]) return false;
+		}
+		return true;
+	});
+}

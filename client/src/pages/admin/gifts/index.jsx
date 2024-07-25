@@ -168,7 +168,7 @@ export function Main({ links }) {
 							<td>${formatDatetime(cheque_cadeau.dateCreation)}</td>
 							<td>
 								<button
-									onclick="window.location.href = 'edit/${cheque_cadeau.id}'"
+									onclick="window.location.href = '/admin/gifts/edit/${cheque_cadeau.id}'"
 									class="btn btn-primary btn-sm"
 									style="margin-right: 15"
 									${cheque_cadeau.code || cheque_cadeau.statut === "Récupéré" ? "disabled" : ""}
@@ -203,8 +203,7 @@ export function Main({ links }) {
 									<th>#</th>
 									<th>Nom</th>
 									<th>Prénom</th>
-									<th>Email</th>
-									<th>Adresse</th>
+									<th>Carte fidélité</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -213,8 +212,12 @@ export function Main({ links }) {
 										<td>{client.id}</td>
 										<td>{client.nom}</td>
 										<td>{client.prenom}</td>
-										<td>{client.email}</td>
-										<td>{client.adresse}</td>
+										<td>
+											{
+												client.includes.carte_fidelite
+													.code
+											}
+										</td>
 									</tr>
 								))}
 							</tbody>

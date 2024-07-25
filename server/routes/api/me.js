@@ -11,6 +11,7 @@ router.get("/:name", controllers.table);
 router.get("/:name/:id", controllers.show);
 router.post("/:name/new", controllers.new);
 router.put("/:name/edit/:id", controllers.edit);
+router.delete("/:name/delete/", controllers.deleteAll);
 router.delete("/:name/delete/:id", controllers.delete);
 
 module.exports = router;

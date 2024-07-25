@@ -10,7 +10,7 @@ import New, { action as newAction, loader as newLoader } from "./new.jsx";
 
 export const loader = async ({ params }) => {
 	const query = qs.stringify({
-		include: ["reclamation"],
+		includes: ["reclamation"],
 	});
 	try {
 		return (await get(`http://localhost:8000/api/me?${query}`)).data;

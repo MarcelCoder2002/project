@@ -42,11 +42,15 @@ export default function Sidebar() {
 						<div className="info">
 							<Link
 								reloadDocument
-								to={
+								to={`/${
 									request.getUser().isAuthenticated()
-										? `/${request.getDomain().getName()}`
-										: "/profile/login"
-								}
+										? request
+												.getUser()
+												.hasRoles("ROLE_CLIENT")
+											? "profile"
+											: "admin"
+										: "profile/login"
+								}`}
 								className="d-block"
 							>
 								{request.getUser().isAuthenticated()
@@ -98,6 +102,11 @@ export default function Sidebar() {
 											className="nav-item menu-open"
 										>
 											<NavLink
+												onClick={(e) => {
+													menu.menu.isLink()
+														? null
+														: e.preventDefault();
+												}}
 												reloadDocument={false}
 												to={`${basename}/${menu.menu.getName()}`}
 												className="nav-link"
@@ -112,6 +121,7 @@ export default function Sidebar() {
 													)}
 												</p>
 											</NavLink>
+
 											{!menu.menu.hasSubMenu() ? null : (
 												<ul className="nav nav-treeview">
 													{menu.subMenus.map(

@@ -23,7 +23,6 @@ export default function DataTable({ actions, tableName, rows = [] }) {
 	const { name } = useParams();
 	const table = new Table(tableName ?? name);
 	let fields = Array.from(table.getFieldObjects().values());
-	console.log(table.getConfig());
 
 	useEffect(() => {
 		// $.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss");
@@ -126,7 +125,7 @@ export default function DataTable({ actions, tableName, rows = [] }) {
 												padding: 0,
 												display: "inline",
 											}}
-											action={`/admin/management/${name}/delete/${
+											action={`delete/${
 												row[table.getId()]
 											}`}
 											method="delete"

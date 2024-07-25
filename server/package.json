@@ -9,7 +9,6 @@
 		"sequelize": "sequelize"
 	},
 	"dependencies": {
-		"@emailjs/browser": "^4.4.1",
 		"@sequelize/mariadb": "^7.0.0-alpha.41",
 		"admin-lte": "^3.2",
 		"bcrypt": "^5.1.1",
@@ -19,6 +18,7 @@
 		"jsonwebtoken": "^9.0.2",
 		"mariadb": "^3.3.1",
 		"mysql2": "^3.10.1",
+		"nodemailer": "^6.9.14",
 		"nodemon": "^3.1.4",
 		"sequelize": "^6.37.3",
 		"sequelize-cli": "^6.6.2",

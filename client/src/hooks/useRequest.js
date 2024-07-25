@@ -1,6 +1,12 @@
-import {createContext} from "react";
+import { createContext, useContext } from "react";
 import Request from "../utils/config/Request.js";
 import User from "../utils/config/User.js";
 import Domain from "../utils/config/Domain.js";
 
-export const RequestContext = createContext(new Request(new User({}), new Domain('')));
+export const RequestContext = createContext(
+	new Request(new User({}), new Domain(""))
+);
+
+export default function useRequest() {
+	return useContext(RequestContext);
+}

@@ -5,7 +5,6 @@ const services = require("./security/services");
 
 app.use(express.json());
 app.use(cors());
-app.use(services.emailjsProvider);
 app.use(services.firewallProvider);
 app.use(services.userProvider);
 app.use(services.accessControlChecker);

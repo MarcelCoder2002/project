@@ -1,6 +1,18 @@
 const config = require("../config/config.json");
-const emailjs = require("@emailjs/browser");
+const nodemailer = require("nodemailer");
 
-exports.send = (type, params) => {
-	emailjs.send(config.env.email.GMAIL_SERVICE_ID, type, params);
+const mailer = nodemailer.createTransport({
+	host: "localhost",
+	port: 1025,
+	secure: false,
+});
+
+exports.send = (options) => {
+	mailer.sendMail(options, function (error, info) {
+		if (error) {
+			console.log("Error:", error);
+		} else {
+			console.log("Email sent:", info.response);
+		}
+	});
 };

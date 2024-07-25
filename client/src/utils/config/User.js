@@ -1,3 +1,4 @@
+import { containsAll } from "../array";
 import Domain from "./Domain";
 import Menu from "./Menu";
 import Table from "./Table";
@@ -8,6 +9,10 @@ class User {
 
 	constructor(data) {
 		this._data = data;
+	}
+
+	getIncludesData(name) {
+		return this._data?.includes?.[name] ?? [];
 	}
 
 	getId() {
@@ -28,6 +33,11 @@ class User {
 
 	getRoles() {
 		return this._data?.roles ?? ["ROLE_USER"];
+	}
+
+	hasRoles(roles) {
+		roles = Array.isArray(roles) ? roles : [roles];
+		return containsAll(roles, this.getRoles());
 	}
 
 	getMenu() {

@@ -1,7 +1,11 @@
+import { useContext } from "react";
 import { Card } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
+import { RequestContext } from "../../hooks/useRequest";
 
 export default function Product({ data }) {
+	const request = useContext(RequestContext);
+
 	return (
 		<Card className="product-card">
 			{/* <Link to={`/client/produit/${product.id}`}> */}
@@ -39,7 +43,11 @@ export default function Product({ data }) {
 				)}
 				<NavLink
 					reloadDocument
-					to={`/profile/cart?id=${data.id}`}
+					to={`/${
+						request.getUser().hasRoles("ROLE_CLIENT")
+							? "profile/cart"
+							: "admin/checkout"
+					}?id=${data.id}`}
 					className="btn btn-primary"
 				>
 					<i className="fas fa-plus"></i>

@@ -17,6 +17,8 @@ import New, { action as newAction, loader as newLoader } from "./new";
 import { action as deleteAction } from "./delete";
 import { get } from "../../../../utils/requests";
 import Table_ from "../../../../utils/config/Table";
+import { useContext } from "react";
+import { RequestContext } from "../../../../hooks/useRequest";
 
 export const loader = async ({ params }) => {
 	try {
@@ -66,7 +68,7 @@ function Main({ links }) {
 	const { name } = useParams();
 	const title = snakeToCapitalCase(name);
 	const data = useLoaderData();
-	const request = useRouteLoaderData("index");
+	const request = useContext(RequestContext);
 	const actions = request.getUser().getTableActions(name);
 
 	if (!Table_.getTables().includes(name)) {

@@ -14,7 +14,9 @@ exports.getCart = async (req, res, next) => {
 	if (req.user.getRoles().includes("ROLE_CLIENT")) {
 		res.json(
 			await req.user.getPanierEcommerce({
-				includes: { produit: { includes: { promotion_produit: {} } } },
+				includes: [
+					{ name: "produit", options: { includes: ["promotion"] } },
+				],
 			})
 		);
 	} else {
@@ -26,7 +28,10 @@ exports.getPurchases = async (req, res, next) => {
 	if (req.user.getRoles().includes("ROLE_CLIENT")) {
 		res.json(
 			await req.user.getAchat({
-				includes: { detail: { includes: { produit: {} } } },
+				order: [["date", "DESC"]],
+				includes: [
+					{ name: "detail", options: { includes: ["produit"] } },
+				],
 			})
 		);
 	} else {
@@ -44,18 +49,27 @@ exports.index = async (req, res, next) => {
 		roles: req.user.getRoles(),
 	};
 
-	if (req.query?.include && req.user.getRoles().includes("ROLE_CLIENT")) {
+	if (req.query?.includes && req.user.getRoles().includes("ROLE_CLIENT")) {
 		data.includes = {};
-		for (const table of req.query.include) {
+		for (const table of req.query.includes) {
 			try {
-				const Model = db[snakeToCamel(table)];
-				data.includes[table] = await Model.findAll({
-					where: { client: req.user.id },
-				});
+				let Model;
+				let options = {};
+				let tableName;
+				if (typeof table === "object") {
+					tableName = table.name;
+					Model = db[snakeToCamel(table.name)];
+					options = table.options ?? options;
+				} else {
+					tableName = table;
+					Model = db[snakeToCamel(table)];
+				}
+				options.where = options.where ?? {};
+				options.where.client = req.user.id;
+				data.includes[tableName] = await Model.findAll(options);
 			} catch (error) {}
 		}
 	}
-
 	res.json(data);
 };
 
@@ -65,9 +79,13 @@ exports.table = async (req, res, next) => {
 		let options = {
 			raw: true,
 			where: req.query?.where ?? {},
+			update: req.query?.update ?? false,
 		};
 		if (["admin", "client"].includes(req.params.name)) {
 			options.attributes = { exclude: ["motDePasse"] };
+		}
+		if (req.user.getRoles().includes("ROLE_CLIENT")) {
+			options.where.client = req.user.id;
 		}
 		res.json(await Model.findAll(options));
 	} catch (error) {
@@ -85,6 +103,7 @@ exports.show = async (req, res, next) => {
 		const Model = db[snakeToCamel(req.params.name)];
 		let options = {
 			raw: true,
+			update: req.query?.update ?? false,
 		};
 		if (["admin", "client"].includes(req.params.name)) {
 			options.attributes = { exclude: ["motDePasse"] };
@@ -100,7 +119,7 @@ exports.show = async (req, res, next) => {
 			} else {
 				res.status(403).json({
 					status: "error",
-					message: "Access denied !",
+					message: "Accès refusé  !",
 				});
 			}
 		} else {
@@ -134,7 +153,7 @@ exports.new = async (req, res, next) => {
 				model = await Model.create(data, options);
 				res.json({
 					status: "success",
-					message: "Model created !",
+					message: "La nouvelle ligne à bien été ajoutée !",
 					response: model,
 				});
 			} else {
@@ -184,20 +203,20 @@ exports.edit = async (req, res, next) => {
 				await model.update(data, options);
 				res.json({
 					status: "success",
-					message: "Model edited !",
+					message: "La ligne à bien été modifiée !",
 					response: model,
 				});
 			} else {
 				res.status(403).json({
 					status: "error",
-					message: "Access denied !",
+					message: "Accès refusé !",
 				});
 			}
 		} else {
 			await model.update(data, options);
 			res.json({
 				status: "success",
-				message: "Model edited !",
+				message: "La ligne à bien été modifiée !",
 				response: model,
 			});
 		}
@@ -225,21 +244,56 @@ exports.delete = async (req, res, next) => {
 				await model.destroy();
 				res.json({
 					status: "success",
-					message: "Model deleted !",
+					message: "La ligne à bien été supprimée !",
 					response: model,
 				});
 			} else {
 				res.status(403).json({
 					status: "error",
-					message: "Access denied !",
+					message: "Accès refusé !",
 				});
 			}
 		} else {
 			await model.destroy();
 			res.json({
 				status: "success",
-				message: "Model deleted !",
+				message: "La ligne à bien été supprimée !",
 				response: model,
+			});
+		}
+	} catch (error) {
+		if (error instanceof TypeError) {
+			res.status(404).json({
+				status: "error",
+				message: "Table `" + req.params.name + "` doesn't exist !",
+			});
+		} else {
+			res.json({ status: "error", message: error.message });
+		}
+	}
+};
+
+exports.deleteAll = async (req, res, next) => {
+	try {
+		const Model = db[snakeToCamel(req.params.name)];
+		if (req.user.getRoles().includes("ROLE_CLIENT")) {
+			if (!!Model.getAttributes()["client"]) {
+				await Model.destroy({ where: { client: req.user.id } });
+				res.json({
+					status: "success",
+					message: "Models deleted !",
+				});
+			} else {
+				res.status(403).json({
+					status: "error",
+					message: "Accès refusé  !",
+				});
+			}
+		} else {
+			await Model.destroy();
+			res.json({
+				status: "success",
+				message: "Models deleted !",
 			});
 		}
 	} catch (error) {

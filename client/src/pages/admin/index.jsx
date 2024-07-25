@@ -25,11 +25,7 @@ export function Router() {
 
 function Admin() {
 	useAuthenticatedUser("ROLE_ADMIN", "/admin/login");
-	return (
-		<>
-			<Outlet />
-		</>
-	);
+	return <Outlet />;
 }
 
 export default Admin;
