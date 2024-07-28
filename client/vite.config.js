@@ -7,5 +7,6 @@ export default defineConfig({
 	server: {
 		port: 8001,
 		strictPort: true,
+		host: "localhost",
 	},
 });

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Form, Link, redirect, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { getBackendURL } from "../utils/url";
 
 export const action = async ({ request }) => {
 	let path = window.location.pathname;
@@ -14,10 +15,7 @@ export const action = async ({ request }) => {
 	}
 
 	try {
-		const response = await axios.post(
-			`http://localhost:8000${path}/login`,
-			data
-		);
+		const response = await axios.post(getBackendURL(`${path}/login`), data);
 		if (response.data.error) {
 			alert(response.data.error);
 		} else {

@@ -54,7 +54,7 @@ module.exports = (sequelize) => {
 		{
 			sequelize,
 			modelName: "Regle",
-			tableName: "regle",
+			tableName: "Regle",
 			timestamps: false,
 			underscored: true,
 			hooks: {

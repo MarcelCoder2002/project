@@ -3,10 +3,11 @@ import Content from "../../components/Content";
 import Header from "../../components/Header";
 import { delete_, get, post, put } from "../../utils/requests";
 import { useEffect, useState } from "react";
+import { getBackendURL } from "../../utils/url";
 
 export const loader = async ({}) => {
 	try {
-		return (await get(`http://localhost:8000/api/me/cart`)).data;
+		return (await get(getBackendURL(`/api/me/cart`))).data;
 	} catch (error) {
 		return redirect("/profile/login");
 	}
@@ -14,12 +15,9 @@ export const loader = async ({}) => {
 
 const save = async () => {
 	for (const tr of document.getElementById("table").children[1].children) {
-		await put(
-			`http://localhost:8000/api/me/panier_ecommerce/edit/${tr.id}`,
-			{
-				quantite: tr.children[2].children[0].value,
-			}
-		);
+		await put(getBackendURL(`/api/me/panier_ecommerce/edit/${tr.id}`), {
+			quantite: tr.children[2].children[0].value,
+		});
 	}
 	alert("Panier enregistré !");
 };
@@ -40,7 +38,7 @@ function Cart() {
 	const checkout = async () => {
 		if (data.length > 0) {
 			if (confirm("Êtes-vous sûr ?")) {
-				await post(`http://localhost:8000/api/me/checkout`);
+				await post(getBackendURL(`/api/me/checkout`));
 				window.location.reload();
 			}
 		} else {
@@ -53,7 +51,7 @@ function Cart() {
 			if (confirm("Êtes-vous sûr ?")) {
 				const tr = event.target.parentElement.parentElement;
 				const response = await delete_(
-					`http://localhost:8000/api/me/panier_ecommerce/delete/${tr.id}`
+					getBackendURL(`/api/me/panier_ecommerce/delete/${tr.id}`)
 				);
 				if (response.data.status !== "error") {
 					const temp = parseFloat(
@@ -89,18 +87,15 @@ function Cart() {
 			if (searchParams.has("id")) {
 				setSearchParams("");
 				try {
-					await post(
-						`http://localhost:8000/api/me/panier_ecommerce/new`,
-						{
-							produit: searchParams.get("id"),
-						}
-					);
+					await post(getBackendURL(`/api/me/panier_ecommerce/new`), {
+						produit: searchParams.get("id"),
+					});
 				} catch (error) {
 					navigate("/profile/login");
 				}
 			}
 			try {
-				let d = (await get(`http://localhost:8000/api/me/cart`)).data;
+				let d = (await get(getBackendURL(`/api/me/cart`))).data;
 				setData(d);
 				let t = 0;
 				for (const cart of d) {

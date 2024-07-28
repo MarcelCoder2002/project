@@ -18,11 +18,11 @@ import { get } from "../../../../utils/requests";
 import Table_ from "../../../../utils/config/Table";
 import { useContext } from "react";
 import { RequestContext } from "../../../../hooks/useRequest";
+import { getBackendURL } from "../../../../utils/url";
 
 export const loader = async ({ params }) => {
 	try {
-		return (await get(`http://localhost:8000/api/table/${params.name}`))
-			.data;
+		return (await get(getBackendURL(`/api/table/${params.name}`))).data;
 	} catch (error) {
 		return redirect("/admin/login");
 	}

@@ -174,7 +174,7 @@ module.exports = (sequelize) => {
 		{
 			sequelize,
 			modelName: "Client",
-			tableName: "client",
+			tableName: "Client",
 			timestamps: false,
 			underscored: true,
 			hooks: {

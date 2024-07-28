@@ -10,6 +10,7 @@ import {
 import { get, put } from "../../../utils/requests";
 import Table from "../../../utils/config/Table";
 import qs from "qs";
+import { getBackendURL } from "../../../utils/url";
 
 export const action = async ({ request, params }) => {
 	let data = {};
@@ -30,7 +31,7 @@ export const action = async ({ request, params }) => {
 	let error = {};
 	try {
 		let response = await put(
-			`http://localhost:8000/api/table/cheque_cadeau/edit/${params.id}`,
+			getBackendURL(`/api/table/cheque_cadeau/edit/${params.id}`),
 			data
 		);
 		if (response.status !== 200 || response.data.status === "error") {
@@ -53,7 +54,7 @@ export const loader = async ({ params }) => {
 	try {
 		const { id } = params;
 		const data = (
-			await get(`http://localhost:8000/api/table/cheque_cadeau/${id}`)
+			await get(getBackendURL(`/api/table/cheque_cadeau/${id}`))
 		).data;
 
 		const table = new Table("cheque_cadeau");
@@ -72,7 +73,7 @@ export const loader = async ({ params }) => {
 			dependenciesData.internal[dependency] = {
 				data: (
 					await get(
-						`http://localhost:8000/api/table/${dependency}?${query}`
+						getBackendURL(`/api/table/${dependency}?${query}`)
 					)
 				).data,
 			};
@@ -80,9 +81,8 @@ export const loader = async ({ params }) => {
 
 		for (const dependency of table.getExternalFields()) {
 			dependenciesData.external[dependency] = {
-				data: (
-					await get(`http://localhost:8000/api/table/${dependency}`)
-				).data,
+				data: (await get(getBackendURL(`/api/table/${dependency}`)))
+					.data,
 			};
 		}
 

@@ -12,7 +12,7 @@ export default function Product({ data }) {
 			<div className="image-div">
 				<Card.Img
 					variant="top"
-					src="/dist/img/product.png"
+					src="/assets/img/product.png"
 					alt={data.nom}
 					className="product-image"
 				/>
@@ -41,17 +41,19 @@ export default function Product({ data }) {
 						</div>
 					</>
 				)}
-				<NavLink
-					reloadDocument
-					to={`/${
-						request.getUser().hasRoles("ROLE_CLIENT")
-							? "profile/cart"
-							: "admin/checkout"
-					}?id=${data.id}`}
-					className="btn btn-primary"
-				>
-					<i className="fas fa-plus"></i>
-				</NavLink>
+				{request.getUser().isAuthenticated() && (
+					<NavLink
+						reloadDocument
+						to={`/${
+							request.getUser().hasRoles("ROLE_CLIENT")
+								? "profile/cart"
+								: "admin/checkout"
+						}?id=${data.id}`}
+						className="btn btn-primary"
+					>
+						<i className="fas fa-plus"></i>
+					</NavLink>
+				)}
 			</Card.Body>
 		</Card>
 	);

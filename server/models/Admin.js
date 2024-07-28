@@ -75,7 +75,7 @@ module.exports = (sequelize) => {
 		{
 			sequelize,
 			modelName: "Admin",
-			tableName: "admin",
+			tableName: "Admin",
 			timestamps: false,
 			underscored: true,
 		}

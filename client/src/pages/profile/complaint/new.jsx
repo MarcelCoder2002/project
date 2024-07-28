@@ -5,11 +5,12 @@ import Header from "../../../components/Header.jsx";
 import { formDataToJSON, parseKeyFormData } from "../../../utils/format.js";
 import { get, post } from "../../../utils/requests.js";
 import Table from "../../../utils/config/Table.js";
+import { getBackendURL } from "../../../utils/url";
 
 export const action = async ({ request }) => {
 	const temp = parseKeyFormData(formDataToJSON(await request.formData()));
 	let response = await post(
-		`http://localhost:8000/api/me/reclamation/new`,
+		getBackendURL(`/api/me/reclamation/new`),
 		temp["reclamation"]
 	);
 	if (response.status !== 200 || response.data.status === "error") {
@@ -31,8 +32,7 @@ export async function loader() {
 
 	for (const dependency of table.getExternalFields()) {
 		dependenciesData.external[dependency] = {
-			data: (await get(`http://localhost:8000/api/me/${dependency}`))
-				.data,
+			data: (await get(getBackendURL(`/api/me/${dependency}`))).data,
 		};
 	}
 

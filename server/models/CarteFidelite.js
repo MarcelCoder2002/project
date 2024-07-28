@@ -54,7 +54,7 @@ module.exports = (sequelize) => {
 		{
 			sequelize,
 			modelName: "CarteFidelite",
-			tableName: "carte_fidelite",
+			tableName: "CarteFidelite",
 			timestamps: false,
 			underscored: true,
 		}

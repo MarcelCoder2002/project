@@ -11,7 +11,7 @@ export default function useUser(userExtraParams = "") {
 	useEffect(() => {
 		const accessToken = sessionStorage.getItem("accessToken");
 		if (accessToken) {
-			get("http://localhost:8000/api/me")
+			get(getBackendURL(`/api/me`))
 				.then((response) => {
 					setUser(response.data);
 					setLoading(false);

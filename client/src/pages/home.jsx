@@ -1,9 +1,4 @@
-import {
-	Outlet,
-	redirect,
-	useLoaderData,
-	useRouteLoaderData,
-} from "react-router-dom";
+import { Outlet, useLoaderData } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -18,12 +13,13 @@ import qs from "qs";
 
 import "../../plugins/jquery/jquery.min.js";
 import "../../plugins/bootstrap/js/bootstrap.bundle.min.js";
-import "../../dist/js/adminlte.min.js";
+import "../../assets/js/adminlte.min.js";
 import { RequestContext } from "../hooks/useRequest.js";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { PrimeReactProvider } from "primereact/api";
 import { Toast } from "primereact/toast";
 import { NotificationContext } from "../hooks/useNotification.js";
+import { getBackendURL } from "../utils/url";
 
 export const loader = async () => {
 	const query = qs.stringify({
@@ -39,7 +35,7 @@ export const loader = async () => {
 	});
 	let user = null;
 	try {
-		const response = await get(`http://localhost:8000/api/me?${query}`);
+		const response = await get(getBackendURL(`/api/me?${query}`));
 		if (
 			!(
 				response.status < 200 ||

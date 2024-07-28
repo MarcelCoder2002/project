@@ -14,13 +14,14 @@ import {
 } from "react-router-dom";
 import New, { action as newAction } from "./new.jsx";
 import Show, { action as showAction, loader as showLoader } from "./show.jsx";
+import { getBackendURL } from "../../../utils/url";
 
 export const loader = async ({ params }) => {
 	const query = qs.stringify({
 		includes: [{ name: "reclamation", options: { update: true } }],
 	});
 	try {
-		return (await get(`http://localhost:8000/api/me?${query}`)).data;
+		return (await get(getBackendURL(`/api/me?${query}`))).data;
 	} catch (error) {
 		return redirect("/profile/login");
 	}

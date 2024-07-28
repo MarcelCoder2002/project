@@ -16,7 +16,7 @@ import "../../plugins/datatables-buttons/js/buttons.print.min.js";
 import "../../plugins/datatables-buttons/js/buttons.colVis.min.js";
 import "moment/moment.js";
 // import "datatables.net-plugins/sorting/datetime-moment.js";
-import "datatables.net-plugins/sorting/currency.js";
+// import "datatables.net-plugins/sorting/currency.js";
 // import "datatables.net-plugins/filtering/row-based/range_dates.js";
 
 export default function DataTable({ actions, tableName, rows = [] }) {

@@ -62,7 +62,7 @@ module.exports = (sequelize) => {
 		{
 			sequelize,
 			modelName: "Detail",
-			tableName: "detail",
+			tableName: "Detail",
 			timestamps: false,
 			underscored: true,
 			hooks: {

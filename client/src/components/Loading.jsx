@@ -5,7 +5,7 @@ export default function Loading() {
 			<div className="preloader flex-column justify-content-center align-items-center">
 				<img
 					className="animation__shake"
-					src="/dist/img/logo.png"
+					src="/assets/img/logo.png"
 					alt="logo"
 					height="60"
 					width="60"

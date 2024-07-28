@@ -3,12 +3,13 @@ import Header from "../../components/Header";
 import { post } from "../../utils/requests";
 import Cart from "../../components/Cart";
 import { formDataToJson } from "../../utils/format";
+import { getBackendURL } from "../../utils/url";
 
 const submit = async ({ request, toast }) => {
 	if (confirm("Êtes-vous sûr ?")) {
 		try {
 			const response = await post(
-				`http://localhost:8000/api/table/checkout`,
+				getBackendURL(`/api/table/checkout`),
 				formDataToJson(await request.formData())
 			);
 			if (response.data.status === "error") {

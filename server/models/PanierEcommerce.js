@@ -42,7 +42,7 @@ module.exports = (sequelize) => {
 		{
 			sequelize,
 			modelName: "PanierEcommerce",
-			tableName: "panier_ecommerce",
+			tableName: "PanierEcommerce",
 			timestamps: false,
 			underscored: true,
 			hooks: {

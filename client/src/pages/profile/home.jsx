@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import "../../../plugins/jquery/jquery.min.js";
 import "../../../plugins/bootstrap/js/bootstrap.bundle.min.js";
 import "../../../plugins/chart.js/Chart.min.js";
-import "../../../dist/js/adminlte.min.js";
+import "../../../assets/js/adminlte.min.js";
 import { NavLink, redirect, useLoaderData } from "react-router-dom";
 import Header from "../../components/Header.jsx";
 import Content from "../../components/Content.jsx";
@@ -12,6 +12,7 @@ import qs from "qs";
 import Card from "../../components/Card.jsx";
 import DataTable from "../../components/DataTable.jsx";
 import { RequestContext } from "../../hooks/useRequest.js";
+import { getBackendURL } from "../../utils/url";
 
 export const loader = async ({}) => {
 	const query = qs.stringify({
@@ -21,7 +22,7 @@ export const loader = async ({}) => {
 		],
 	});
 	try {
-		const data = (await get(`http://localhost:8000/api/me?${query}`)).data;
+		const data = (await get(getBackendURL(`/api/me?${query}`))).data;
 		if (!data.roles.includes("ROLE_CLIENT")) {
 			return redirect("/profile/login");
 		} else {

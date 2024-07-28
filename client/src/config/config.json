@@ -546,5 +546,9 @@
 			"domains": ["profile"],
 			"roles": ["ROLE_CLIENT"]
 		}
+	},
+	"backendServer": {
+		"host": "localhost",
+		"port": 8000
 	}
 }

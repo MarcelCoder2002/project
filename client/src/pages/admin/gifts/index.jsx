@@ -4,19 +4,20 @@ import { get } from "../../../utils/requests.js";
 import { Outlet, redirect, Route, useLoaderData } from "react-router-dom";
 import { formatDatetime } from "../../../utils/format.js";
 import React, { useEffect } from "react";
+import { getBackendURL } from "../../../utils/url";
 
 import Edit, { action as editAction, loader as editLoader } from "./edit";
 
 import "../../../../plugins/datatables/jquery.dataTables.min.js";
 import "../../../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js";
-import "datatables.net-plugins/sorting/currency.js";
-import "datatables.net-plugins/type-detection/currency.js";
+// import "datatables.net-plugins/sorting/currency.js";
+// import "datatables.net-plugins/type-detection/currency.js";
 
 import "../../../../assets/css/index.css";
 
 export const loader = async ({ params }) => {
 	try {
-		return (await get(`http://localhost:8000/api/table/gifts`)).data;
+		return (await get(getBackendURL(`/api/table/gifts`))).data;
 	} catch (error) {
 		return redirect("/admin/login");
 	}

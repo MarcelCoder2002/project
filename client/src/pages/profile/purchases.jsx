@@ -7,14 +7,15 @@ import React, { useEffect } from "react";
 
 import "../../../plugins/datatables/jquery.dataTables.min.js";
 import "../../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js";
-import "datatables.net-plugins/sorting/currency.js";
-import "datatables.net-plugins/type-detection/currency.js";
+// import "datatables.net-plugins/sorting/currency.js";
+// import "datatables.net-plugins/type-detection/currency.js";
 
 import "../../../assets/css/index.css";
+import { getBackendURL } from "../../utils/url";
 
 export const loader = async ({ params }) => {
 	try {
-		return (await get(`http://localhost:8000/api/me/purchases`)).data;
+		return (await get(getBackendURL(`/api/me/purchases`))).data;
 	} catch (error) {
 		return redirect("/profile/login");
 	}

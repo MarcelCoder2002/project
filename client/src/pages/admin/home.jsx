@@ -3,7 +3,7 @@ import { Chart } from "primereact/chart";
 import "../../../plugins/jquery/jquery.min.js";
 import "../../../plugins/bootstrap/js/bootstrap.bundle.min.js";
 import "../../../plugins/chart.js/Chart.min.js";
-import "../../../dist/js/adminlte.min.js";
+import "../../../assets/js/adminlte.min.js";
 import { redirect, Route, useLoaderData } from "react-router-dom";
 import Management, { Router as ManagementRouter } from "./management/index.jsx";
 import Content from "../../components/Content.jsx";
@@ -17,13 +17,13 @@ import Gifts, {
 } from "./gifts/index.jsx";
 import Checkout from "./checkout.jsx";
 import { capitalize } from "../../utils/format.js";
+import { getBackendURL } from "../../utils/url";
 
 export async function loader({}) {
 	try {
 		return {
-			statistics: (
-				await get(`http://localhost:8000/api/table/statistics`)
-			).data,
+			statistics: (await get(getBackendURL(`/api/table/statistics`)))
+				.data,
 		};
 	} catch (error) {
 		return redirect("/admin/login");

@@ -109,6 +109,10 @@
 			}
 		]
 	},
+	"server": {
+		"host": "localhost",
+		"port": 8000
+	},
 	"database": {
 		"username": "root",
 		"password": "rootpass",

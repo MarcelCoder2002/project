@@ -2,6 +2,7 @@ const http = require("http");
 const app = require("./index");
 
 const db = require("./models");
+const config = require("./config/config.json");
 
 const normalizePort = (val) => {
 	const port = parseInt(val, 10);
@@ -14,7 +15,7 @@ const normalizePort = (val) => {
 	}
 	return false;
 };
-const port = normalizePort(process.env.PORT || "8000");
+const port = normalizePort(process.env.PORT || (config.server?.port ?? false));
 app.set("port", port);
 
 const errorHandler = (error) => {
@@ -44,8 +45,13 @@ server.on("error", errorHandler);
 server.on("listening", () => {
 	const address = server.address();
 	const bind =
-		typeof address === "string" ? "pipe " + address : "port " + port;
+		typeof address === "string"
+			? "pipe " + address
+			: `port ${address.port} (at ${address.address})`;
 	console.log("Listening on " + bind);
+});
+server.on("request", (req, res) => {
+	console.log(`Request: ${req.method} ${req.url}`);
 });
 
 db.sequelize.sync().then(async () => {
@@ -137,5 +143,5 @@ db.sequelize.sync().then(async () => {
 	// 	prix: 2.5,
 	// 	ean1: "0388036309497",
 	// });
-	server.listen(port);
+	server.listen(port, config.server?.host ?? "localhost");
 });

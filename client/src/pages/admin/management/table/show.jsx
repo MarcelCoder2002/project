@@ -11,6 +11,7 @@ import User from "../../../../utils/config/User";
 import useRequest from "../../../../hooks/useRequest";
 import qs from "qs";
 import { Fragment } from "react";
+import { getBackendURL } from "../../../../utils/url";
 
 export const loader = async ({ params }) => {
 	let data = null;
@@ -19,20 +20,22 @@ export const loader = async ({ params }) => {
 			case "reclamation":
 				data = (
 					await get(
-						`http://localhost:8000/api/table/reclamation/${
-							params.id
-						}?${qs.stringify({
-							includes: [
+						getBackendURL(
+							`/api/table/reclamation/${params.id}?${qs.stringify(
 								{
-									name: "message",
-									options: {
-										includes: ["admin"],
-										update: true,
-									},
-								},
-								"client",
-							],
-						})}`
+									includes: [
+										{
+											name: "message",
+											options: {
+												includes: ["admin"],
+												update: true,
+											},
+										},
+										"client",
+									],
+								}
+							)}`
+						)
 					)
 				).data;
 				break;
@@ -40,7 +43,7 @@ export const loader = async ({ params }) => {
 			default:
 				data = (
 					await get(
-						`http://localhost:8000/api/table/${params.name}/${params.id}`
+						getBackendURL(`/api/table/${params.name}/${params.id}`)
 					)
 				).data;
 				break;
@@ -56,7 +59,7 @@ export const action = async ({ request }) => {
 	try {
 		const data = formDataToJson(await request.formData());
 		const message = (
-			await post(`http://localhost:8000/api/table/message/new`, {
+			await post(getBackendURL(`/api/table/message/new`), {
 				...data,
 				msg: {
 					src: "admin",

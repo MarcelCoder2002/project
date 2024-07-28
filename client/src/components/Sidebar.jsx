@@ -18,7 +18,7 @@ export default function Sidebar() {
 					className="brand-link"
 				>
 					<img
-						src="/dist/img/logo.png"
+						src="/assets/img/logo.png"
 						alt="logo"
 						className="brand-image img-circle elevation-3"
 						style={{ opacity: 0.8 }}

@@ -63,7 +63,7 @@ module.exports = (sequelize) => {
 		{
 			sequelize,
 			modelName: "PromotionRayon",
-			tableName: "promotion_rayon",
+			tableName: "PromotionRayon",
 			timestamps: false,
 			underscored: true,
 		}

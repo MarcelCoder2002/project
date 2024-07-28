@@ -7,20 +7,23 @@ import useRequest from "../../../hooks/useRequest";
 import { formatDatetime, formDataToJson } from "../../../utils/format";
 import User from "../../../utils/config/User";
 import { Fragment } from "react";
+import { getBackendURL } from "../../../utils/url";
 
 export const loader = async ({ params }) => {
 	const data = (
 		await get(
-			`http://localhost:8000/api/me/reclamation/${
-				params.id
-			}?${qs.stringify({
-				includes: [
-					{
-						name: "message",
-						options: { includes: ["admin"], update: true },
-					},
-				],
-			})}`
+			getBackendURL(
+				`http://localhost:8000/api/me/reclamation/${
+					params.id
+				}?${qs.stringify({
+					includes: [
+						{
+							name: "message",
+							options: { includes: ["admin"], update: true },
+						},
+					],
+				})}`
+			)
 		)
 	).data;
 	return data;
@@ -30,7 +33,7 @@ export const action = async ({ request }) => {
 	try {
 		const data = formDataToJson(await request.formData());
 		const message = (
-			await post(`http://localhost:8000/api/me/message/new`, {
+			await post(getBackendURL(`/api/me/message/new`), {
 				...data,
 				msg: {
 					src: "client",

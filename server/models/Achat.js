@@ -67,7 +67,7 @@ module.exports = (sequelize) => {
 		{
 			sequelize,
 			modelName: "Achat",
-			tableName: "achat",
+			tableName: "Achat",
 			timestamps: false,
 			underscored: true,
 		}

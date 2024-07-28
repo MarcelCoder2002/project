@@ -5,6 +5,7 @@ import Header from "../../../../components/Header";
 import { formDataToJson, snakeToCapitalCase } from "../../../../utils/format";
 import { get, post } from "../../../../utils/requests";
 import Table from "../../../../utils/config/Table";
+import { getBackendURL } from "../../../../utils/url";
 
 export const action = async ({ request, params }) => {
 	let data = {};
@@ -23,7 +24,7 @@ export const action = async ({ request, params }) => {
 		}
 	}
 	let response = await post(
-		`http://localhost:8000/api/table/${params.name}/new`,
+		getBackendURL(`/api/table/${params.name}/new`),
 		data
 	);
 	if (response.status !== 200 || response.data.status === "error") {
@@ -46,9 +47,8 @@ export async function loader({ params }) {
 	try {
 		for (const dependency of table.getExternalFields()) {
 			dependenciesData.external[dependency] = {
-				data: (
-					await get(`http://localhost:8000/api/table/${dependency}`)
-				).data,
+				data: (await get(getBackendURL(`/api/table/${dependency}`)))
+					.data,
 			};
 		}
 

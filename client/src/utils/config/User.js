@@ -76,8 +76,8 @@ class User {
 
 	getImage() {
 		return this.isAuthenticated()
-			? "/dist/img/user2-160x160.jpg"
-			: "/dist/img/user-1.avif";
+			? "/assets/img/user2-160x160.jpg"
+			: "/assets/img/user-1.avif";
 	}
 }
 
