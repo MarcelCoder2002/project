@@ -8,6 +8,7 @@ import Profile, { Router as ProfileRouter } from "./profile";
 import Admin, { Router as AdminRouter } from "./admin";
 import Store, { Router as StoreRouter } from "./store";
 import Home, { loader as homeLoader } from "./home";
+import config from "../config/config.json";
 
 function Index() {
 	return (
@@ -33,7 +34,7 @@ function Index() {
 						</Route>
 					</>
 				),
-				{ basename: "/marcel-project/" }
+				{ basename: config?.server?.base }
 			)}
 		/>
 	);
