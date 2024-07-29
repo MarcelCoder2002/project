@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { Card } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { RequestContext } from "../../hooks/useRequest";
+import { getAsset } from "../../utils/url";
 
 export default function Product({ data }) {
 	const request = useContext(RequestContext);
@@ -12,7 +13,7 @@ export default function Product({ data }) {
 			<div className="image-div">
 				<Card.Img
 					variant="top"
-					src="/assets/img/product.png"
+					src={getAsset("/img/product.png")}
 					alt={data.nom}
 					className="product-image"
 				/>

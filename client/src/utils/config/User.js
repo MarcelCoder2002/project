@@ -1,4 +1,5 @@
 import { containsAll } from "../array";
+import { getAsset } from "../url";
 import Domain from "./Domain";
 import Menu from "./Menu";
 import Table from "./Table";
@@ -76,8 +77,8 @@ class User {
 
 	getImage() {
 		return this.isAuthenticated()
-			? "/assets/img/user2-160x160.jpg"
-			: "/assets/img/user-1.avif";
+			? getAsset("/img/user2-160x160.jpg")
+			: getAsset("/img/user-1.avif");
 	}
 }
 

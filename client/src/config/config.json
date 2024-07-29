@@ -548,7 +548,10 @@
 		}
 	},
 	"backendServer": {
-		"host": "localhost",
-		"port": 8000
+		"host": "192.168.1.15",
+		"base": "marcel-project-backend-server"
+	},
+	"server": {
+		"base": "/marcel-project/"
 	}
 }

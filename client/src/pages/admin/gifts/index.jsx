@@ -169,7 +169,7 @@ export function Main({ links }) {
 							<td>${formatDatetime(cheque_cadeau.dateCreation)}</td>
 							<td>
 								<button
-									onclick="window.location.href = '/admin/gifts/edit/${cheque_cadeau.id}'"
+									onclick="window.location.href = 'gifts/edit/${cheque_cadeau.id}'"
 									class="btn btn-primary btn-sm"
 									style="margin-right: 15"
 									${cheque_cadeau.code || cheque_cadeau.statut === "Récupéré" ? "disabled" : ""}

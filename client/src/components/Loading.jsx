@@ -1,3 +1,5 @@
+import { getAsset } from "../utils/url";
+
 export default function Loading() {
 	return (
 		<>
@@ -5,7 +7,7 @@ export default function Loading() {
 			<div className="preloader flex-column justify-content-center align-items-center">
 				<img
 					className="animation__shake"
-					src="/assets/img/logo.png"
+					src={getAsset("/img/logo.png")}
 					alt="logo"
 					height="60"
 					width="60"

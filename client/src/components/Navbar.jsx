@@ -1,13 +1,14 @@
 import { NavLink } from "react-router-dom";
 import { useContext } from "react";
 import { RequestContext } from "../hooks/useRequest.js";
+import config from "../config/config.json";
 
 export default function Navbar() {
 	const request = useContext(RequestContext);
 	const handleClick = (event) => {
 		event.preventDefault();
 		sessionStorage.removeItem("accessToken");
-		window.location = "/";
+		window.location = config?.server?.base ?? "/";
 	};
 
 	const notifications = request

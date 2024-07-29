@@ -32,7 +32,8 @@ function Index() {
 							</Route>
 						</Route>
 					</>
-				)
+				),
+				{ basename: "/marcel-project/" }
 			)}
 		/>
 	);

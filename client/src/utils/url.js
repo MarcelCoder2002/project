@@ -5,8 +5,14 @@ export function getBackendURL(path) {
 	return `http${server.https ? "s" : ""}://${
 		server.host ? server.host : "localhost"
 	}${server.port ? ":" + server.port : ""}${
-		server.root ? "/" + server.root : ""
+		server.base ? "/" + server.base : ""
 	}${path ? (path.startsWith("/") ? path : "/" + path) : "/"}`;
+}
+
+export function getAsset(path) {
+	return `${config.server.base ?? "/"}assets${
+		path ? (path.startsWith("/") ? path : "/" + path) : "/"
+	}`;
 }
 
 export function getPathname(url) {

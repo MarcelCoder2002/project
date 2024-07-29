@@ -2,6 +2,8 @@ import React, { useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { RequestContext } from "../hooks/useRequest.js";
 import Table from "../utils/config/Table.js";
+import { getAsset } from "../utils/url.js";
+import config from "../config/config.json";
 
 export default function Sidebar() {
 	const request = useContext(RequestContext);
@@ -14,11 +16,13 @@ export default function Sidebar() {
 			<aside className="main-sidebar sidebar-dark-primary elevation-4">
 				{/*<!-- Brand Logo -->*/}
 				<a
-					href={`/${request.getDomain().getName()}`}
+					href={`${config?.server?.base ?? "/"}${request
+						.getDomain()
+						.getName()}`}
 					className="brand-link"
 				>
 					<img
-						src="/assets/img/logo.png"
+						src={getAsset("/img/logo.png")}
 						alt="logo"
 						className="brand-image img-circle elevation-3"
 						style={{ opacity: 0.8 }}

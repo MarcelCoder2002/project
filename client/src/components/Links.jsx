@@ -29,7 +29,7 @@ export default function Links() {
 						rel="stylesheet"
 						href="/plugins/jqvmap/jqvmap.min.css"
 					/>
-					<link rel="stylesheet" href="/assets/css/adminlte.min.css" />
+					<link rel="stylesheet" href="assets/css/adminlte.min.css" />
 					<link
 						rel="stylesheet"
 						href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css"

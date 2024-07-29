@@ -21,6 +21,8 @@ import { Toast } from "primereact/toast";
 import { NotificationContext } from "../hooks/useNotification.js";
 import { getBackendURL } from "../utils/url";
 
+import config from "../config/config.json";
+
 export const loader = async () => {
 	const query = qs.stringify({
 		includes: [
@@ -47,10 +49,12 @@ export const loader = async () => {
 		}
 	} catch (e) {}
 	let path = window.location.pathname;
-	if (path === "/") {
+	let base = `/${config?.server?.base?.replace(/\//, "") ?? ""}`;
+	if (path === base) {
 		path = "";
 	} else {
-		path = path.split("/")[1];
+		path = base.length === 1 ? path : path.replace(base, "");
+		path = path.split("/")[0];
 	}
 	return new Request(new User(user), new Domain(path));
 };

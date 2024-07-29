@@ -13,9 +13,7 @@ export const loader = async ({ params }) => {
 	const data = (
 		await get(
 			getBackendURL(
-				`http://localhost:8000/api/me/reclamation/${
-					params.id
-				}?${qs.stringify({
+				`/api/me/reclamation/${params.id}?${qs.stringify({
 					includes: [
 						{
 							name: "message",

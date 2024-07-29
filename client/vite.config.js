@@ -8,5 +8,10 @@ export default defineConfig({
 		port: 8001,
 		strictPort: true,
 		host: "localhost",
+		hmr: {
+			clientPort: 8001,
+			port: 8002,
+		},
 	},
+	base: "/marcel-project/",
 });

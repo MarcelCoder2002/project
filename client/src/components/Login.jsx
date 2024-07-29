@@ -6,7 +6,7 @@ import { getBackendURL } from "../utils/url";
 export const action = async ({ request }) => {
 	let path = window.location.pathname;
 	if (path !== "/") {
-		path = "/" + path.split("/")[1];
+		path = "/" + path.split("/").at(-2);
 	}
 
 	const data = {};
