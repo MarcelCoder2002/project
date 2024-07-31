@@ -55,6 +55,7 @@ server.on("request", (req, res) => {
 });
 
 db.sequelize.sync().then(async () => {
+if (! await db.Admin.findByPk(1)) {
 	// await db.Admin.create({
 	// 	nom: "Admin",
 	// 	prenom: "Adminer",
@@ -143,5 +144,6 @@ db.sequelize.sync().then(async () => {
 	// 	prix: 2.5,
 	// 	ean1: "0388036309497",
 	// });
+}
 	server.listen(port, config.server?.host ?? "localhost");
 });
