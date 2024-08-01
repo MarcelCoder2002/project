@@ -55,95 +55,95 @@ server.on("request", (req, res) => {
 });
 
 db.sequelize.sync().then(async () => {
-if (! await db.Admin.findByPk(1)) {
-	// await db.Admin.create({
-	// 	nom: "Admin",
-	// 	prenom: "Adminer",
-	// 	email: "admin@gmail.com",
-	// 	motDePasse: "admin",
-	// 	adresse: "Agadir",
-	// });
-
-	// await db.Client.create(
-	// 	{
-	// 		nom: "Goumou",
-	// 		prenom: "Marcel Raymond",
-	// 		email: "mrg@gmail.com",
-	// 		motDePasse: "pass",
-	// 		adresse: "Agadir",
-	// 	},
-	// 	{
-	// 		$dependencies: {
-	// 			carte_fidelite: {
-	// 				code: "3850374938464",
-	// 			},
-	// 		},
-	// 	}
-	// );
-
-	// const magasin = await db.Magasin.create({
-	// 	nom: "Aswak",
-	// 	adresse: "Casablanca",
-	// });
-
-	// const regle1 = await db.Regle.create({ multiplicite: 2 });
-	// const regle2 = await db.Regle.create({
-	// 	multiplicite: 3,
-	// 	dateFin: new Date(),
-	// });
-
-	// const rayon1 = await db.Rayon.create(
-	// 	{
-	// 		nom: "Cereales",
-	// 		regle: regle1.id,
-	// 	},
-	// 	{ $dependencies: { promotion_rayon: { pourcentage: 10 } } }
-	// );
-	// await rayon1.createProduit({
-	// 	nom: "Riz 1kg",
-	// 	prix: 17.95,
-	// 	ean1: "4384038309498",
-	// });
-	// await rayon1.createProduit({
-	// 	nom: "Pâtes 500g",
-	// 	prix: 14.95,
-	// });
-
-	// const rayon2 = await db.Rayon.create({
-	// 	nom: "Jeux",
-	// 	regle: regle1.id,
-	// });
-	// await rayon2.createProduit({
-	// 	nom: "PS4",
-	// 	prix: 2999.99,
-	// 	ean1: "1384038309497",
-	// });
-	// await rayon2.createProduit(
-	// 	{
-	// 		nom: "Fifa 23",
-	// 		prix: 700.99,
-	// 	},
-	// 	{ $dependencies: { promotion_produit: { pourcentage: 10 } } }
-	// );
-
-	// const rayon3 = await db.Rayon.create({
-	// 	nom: "Laiterie",
-	// 	regle: regle2.id,
-	// });
-	// await rayon3.createProduit({
-	// 	nom: "Raib du bled",
-	// 	prix: 10.99,
-	// 	ean1: "0384038309497",
-	// });
-	// await rayon3.createProduit({
-	// 	nom: "Perly",
-	// 	prix: 3,
-	// });
-	// await rayon3.createProduit({
-	// 	nom: "Danone",
-	// 	prix: 2.5,
-	// 	ean1: "0388036309497",
-	// });
-}
+	if (! await db.Admin.findByPk(1)) {
+		await db.Admin.create({
+			nom: "Admin",
+			prenom: "Adminer",
+			email: "admin@gmail.com",
+			motDePasse: "admin",
+			adresse: "Agadir",
+		});
+	
+		await db.Client.create(
+			{
+				nom: "Goumou",
+				prenom: "Marcel Raymond",
+				email: "mrg@gmail.com",
+				motDePasse: "pass",
+				adresse: "Agadir",
+			},
+			{
+				$dependencies: {
+					carte_fidelite: {
+						code: "3850374938464",
+					},
+				},
+			}
+		);
+	
+		const magasin = await db.Magasin.create({
+			nom: "Aswak",
+			adresse: "Casablanca",
+		});
+	
+		const regle1 = await db.Regle.create({ multiplicite: 2 });
+		const regle2 = await db.Regle.create({
+			multiplicite: 3,
+			dateFin: new Date(),
+		});
+	
+		const rayon1 = await db.Rayon.create(
+			{
+				nom: "Cereales",
+				regle: regle1.id,
+			},
+			{ $dependencies: { promotion_rayon: { pourcentage: 10 } } }
+		);
+		await rayon1.createProduit({
+			nom: "Riz 1kg",
+			prix: 17.95,
+			ean1: "4384038309498",
+		});
+		await rayon1.createProduit({
+			nom: "Pâtes 500g",
+			prix: 14.95,
+		});
+	
+		const rayon2 = await db.Rayon.create({
+			nom: "Jeux",
+			regle: regle1.id,
+		});
+		await rayon2.createProduit({
+			nom: "PS4",
+			prix: 2999.99,
+			ean1: "1384038309497",
+		});
+		await rayon2.createProduit(
+			{
+				nom: "Fifa 23",
+				prix: 700.99,
+			},
+			{ $dependencies: { promotion_produit: { pourcentage: 10 } } }
+		);
+	
+		const rayon3 = await db.Rayon.create({
+			nom: "Laiterie",
+			regle: regle2.id,
+		});
+		await rayon3.createProduit({
+			nom: "Raib du bled",
+			prix: 10.99,
+			ean1: "0384038309497",
+		});
+		await rayon3.createProduit({
+			nom: "Perly",
+			prix: 3,
+		});
+		await rayon3.createProduit({
+			nom: "Danone",
+			prix: 2.5,
+			ean1: "0388036309497",
+		});
+	}
 	server.listen(port, config.server?.host ?? "localhost");
 });
